@@ -1,0 +1,439 @@
+{
+  "evaluation_engine": "Great Expectations Specification Engine v1.0",
+  "expectation_suite_name": "flight_silver_suite",
+  "run_id": "20261104_084327",
+  "success": false,
+  "statistics": {
+    "evaluated_expectations": 35,
+    "successful_expectations": 34,
+    "unsuccessful_expectations": 1,
+    "success_percent": 97.14,
+    "duration_seconds": 0.227
+  },
+  "results": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 1000000,
+        "max_value": 3000000
+      },
+      "success": true,
+      "result": {
+        "observed_value": 1747627,
+        "element_count": 1747627
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "flight_id"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "airline"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "flight_number"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "origin"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "destination"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "scheduled_departure"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "actual_departure"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "scheduled_arrival"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "actual_arrival"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "delay_reason"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "cancelled"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "diverted"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "aircraft_type"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "distance"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "route"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "departure_hour"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "flight_status"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "largest_delay_factor"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "delay_severity"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "flight_id",
+        "max_unexpected_percent": 0.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": {
+        "column": "flight_id"
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unique_count": 1747627,
+        "unexpected_count": 0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "airline",
+        "max_unexpected_percent": 0.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "airline",
+        "value_set": [
+          "American Airlines",
+          "Delta",
+          "Southwest",
+          "United"
+        ]
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "unexpected_examples": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "origin",
+        "max_unexpected_percent": 0.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "destination",
+        "max_unexpected_percent": 0.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "delay_minutes",
+        "min_value": -10,
+        "max_value": 30
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "min_observed": -10.0,
+        "max_observed": 30.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "distance",
+        "min_value": 1,
+        "max_value": 5000
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "min_observed": 100.0,
+        "max_observed": 3000.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "departure_hour",
+        "min_value": 0,
+        "max_value": 23
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "min_observed": 0.0,
+        "max_observed": 23.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_missingness_to_be_between",
+      "kwargs": {
+        "column": "delay_reason",
+        "min_percent": 20.0,
+        "max_percent": 35.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "null_count": 468873,
+        "observed_null_percent": 26.8291
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "largest_delay_factor",
+        "max_unexpected_percent": 0.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "flight_status",
+        "value_set": [
+          "operated",
+          "cancelled",
+          "diverted",
+          "cancelled_and_diverted"
+        ]
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "unexpected_examples": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "delay_severity",
+        "value_set": [
+          "On-Time",
+          "Minor Delay (1-15 min)",
+          "Moderate Delay (16-30 min)",
+          "Severe Delay (>30 min)"
+        ]
+      },
+      "success": true,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 0,
+        "unexpected_percent": 0.0,
+        "unexpected_examples": []
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "delay_minutes",
+        "min_value": 100,
+        "max_value": 200
+      },
+      "success": false,
+      "result": {
+        "element_count": 1747627,
+        "unexpected_count": 1747627,
+        "unexpected_percent": 100.0,
+        "min_observed": -10.0,
+        "max_observed": 30.0
+      }
+    }
+  ]
+}

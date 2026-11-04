@@ -1,0 +1,60 @@
+<svg width="750" height="430" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">
+<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Airport Hub Delay & Congestion Analysis</text>
+<text x="40" y="70" font-size="13" fill="#64748b">Origin vs Destination arrival delay performance across major airport hubs</text>
+<text x="40" y="128" font-size="13" font-weight="bold" fill="#1e293b">JFK</text>
+<text x="90" y="128" font-size="12" fill="#64748b">698,568 ops</text>
+<rect x="230" y="110" width="180" height="14" rx="3" fill="#3b82f6"/>
+<text x="420" y="121" font-size="10" fill="#1d4ed8">Origin: 10.01m</text>
+<rect x="440" y="110" width="179" height="14" rx="3" fill="#f97316"/>
+<text x="629" y="121" font-size="10" fill="#c2410c">Dest: 9.98m</text>
+<text x="40" y="160" font-size="13" font-weight="bold" fill="#1e293b">MIA</text>
+<text x="90" y="160" font-size="12" fill="#64748b">350,443 ops</text>
+<rect x="230" y="142" width="0" height="14" rx="3" fill="#3b82f6"/>
+<text x="240" y="153" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
+<rect x="440" y="142" width="180" height="14" rx="3" fill="#f97316"/>
+<text x="630" y="153" font-size="10" fill="#c2410c">Dest: 10.01m</text>
+<text x="40" y="192" font-size="13" font-weight="bold" fill="#1e293b">ORD</text>
+<text x="90" y="192" font-size="12" fill="#64748b">350,059 ops</text>
+<rect x="230" y="174" width="180" height="14" rx="3" fill="#3b82f6"/>
+<text x="420" y="185" font-size="10" fill="#1d4ed8">Origin: 10.0m</text>
+<rect x="440" y="174" width="0" height="14" rx="3" fill="#f97316"/>
+<text x="450" y="185" font-size="10" fill="#c2410c">Dest: 0.0m</text>
+<text x="40" y="224" font-size="13" font-weight="bold" fill="#1e293b">ATL</text>
+<text x="90" y="224" font-size="12" fill="#64748b">349,767 ops</text>
+<rect x="230" y="206" width="180" height="14" rx="3" fill="#3b82f6"/>
+<text x="420" y="217" font-size="10" fill="#1d4ed8">Origin: 10.01m</text>
+<rect x="440" y="206" width="0" height="14" rx="3" fill="#f97316"/>
+<text x="450" y="217" font-size="10" fill="#c2410c">Dest: 0.0m</text>
+<text x="40" y="256" font-size="13" font-weight="bold" fill="#1e293b">LAX</text>
+<text x="90" y="256" font-size="12" fill="#64748b">349,667 ops</text>
+<rect x="230" y="238" width="179" height="14" rx="3" fill="#3b82f6"/>
+<text x="419" y="249" font-size="10" fill="#1d4ed8">Origin: 9.99m</text>
+<rect x="440" y="238" width="0" height="14" rx="3" fill="#f97316"/>
+<text x="450" y="249" font-size="10" fill="#c2410c">Dest: 0.0m</text>
+<text x="40" y="288" font-size="13" font-weight="bold" fill="#1e293b">BOS</text>
+<text x="90" y="288" font-size="12" fill="#64748b">349,665 ops</text>
+<rect x="230" y="270" width="0" height="14" rx="3" fill="#3b82f6"/>
+<text x="240" y="281" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
+<rect x="440" y="270" width="179" height="14" rx="3" fill="#f97316"/>
+<text x="629" y="281" font-size="10" fill="#c2410c">Dest: 9.99m</text>
+<text x="40" y="320" font-size="13" font-weight="bold" fill="#1e293b">SFO</text>
+<text x="90" y="320" font-size="12" fill="#64748b">349,110 ops</text>
+<rect x="230" y="302" width="0" height="14" rx="3" fill="#3b82f6"/>
+<text x="240" y="313" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
+<rect x="440" y="302" width="180" height="14" rx="3" fill="#f97316"/>
+<text x="630" y="313" font-size="10" fill="#c2410c">Dest: 10.02m</text>
+<text x="40" y="352" font-size="13" font-weight="bold" fill="#1e293b">SEA</text>
+<text x="90" y="352" font-size="12" fill="#64748b">349,049 ops</text>
+<rect x="230" y="334" width="0" height="14" rx="3" fill="#3b82f6"/>
+<text x="240" y="345" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
+<rect x="440" y="334" width="180" height="14" rx="3" fill="#f97316"/>
+<text x="630" y="345" font-size="10" fill="#c2410c">Dest: 10.0m</text>
+<text x="40" y="384" font-size="13" font-weight="bold" fill="#1e293b">DFW</text>
+<text x="90" y="384" font-size="12" fill="#64748b">348,926 ops</text>
+<rect x="230" y="366" width="179" height="14" rx="3" fill="#3b82f6"/>
+<text x="419" y="377" font-size="10" fill="#1d4ed8">Origin: 9.98m</text>
+<rect x="440" y="366" width="0" height="14" rx="3" fill="#f97316"/>
+<text x="450" y="377" font-size="10" fill="#c2410c">Dest: 0.0m</text>
+<line x1="40" y1="400" x2="710" y2="400" stroke="#e2e8f0" stroke-width="1"/>
+<text x="40" y="420" font-size="12" fill="#94a3b8">Source: DuckDB Airport Bottlenecks Mart (data/gold/airport_bottlenecks.parquet)</text>
+</svg>

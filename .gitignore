@@ -1,2 +1,19 @@
-data/raw/flight_delays.csv
-data/raw/flight_delays.csv
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.ipynb_checkpoints
+
+# Data files (Large Lakehouse storage)
+data/raw/*.csv
+data/bronze/*.parquet
+data/silver/*.parquet
+
+# OS files
+.DS_Store
+Thumbs.db

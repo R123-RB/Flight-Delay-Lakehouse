@@ -1,0 +1,38 @@
+<svg width="750" height="460" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">
+<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Top Corridors by Average Flight Delay</text>
+<text x="40" y="70" font-size="13" fill="#64748b">Highest average delay routes across major origin-destination pairs</text>
+<text x="40" y="124" font-size="13" font-weight="600" fill="#334155">JFK-MIA</text>
+<rect x="130" y="105" width="283" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="423" y="123" font-size="12" font-weight="bold" fill="#4338ca">10.11 m</text>
+<text x="480" y="123" font-size="12" fill="#64748b">Volume: 70,237 flights | Dist: 1555 mi</text>
+<text x="40" y="162" font-size="13" font-weight="600" fill="#334155">LAX-BOS</text>
+<rect x="130" y="143" width="281" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="421" y="161" font-size="12" font-weight="bold" fill="#4338ca">10.07 m</text>
+<text x="480" y="161" font-size="12" fill="#64748b">Volume: 69,934 flights | Dist: 1552 mi</text>
+<text x="40" y="200" font-size="13" font-weight="600" fill="#334155">ATL-SEA</text>
+<rect x="130" y="181" width="281" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="421" y="199" font-size="12" font-weight="bold" fill="#4338ca">10.07 m</text>
+<text x="480" y="199" font-size="12" fill="#64748b">Volume: 69,909 flights | Dist: 1548 mi</text>
+<text x="40" y="238" font-size="13" font-weight="600" fill="#334155">LAX-SFO</text>
+<rect x="130" y="219" width="281" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="421" y="237" font-size="12" font-weight="bold" fill="#4338ca">10.05 m</text>
+<text x="480" y="237" font-size="12" fill="#64748b">Volume: 69,886 flights | Dist: 1549 mi</text>
+<text x="40" y="276" font-size="13" font-weight="600" fill="#334155">JFK-SFO</text>
+<rect x="130" y="257" width="281" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="421" y="275" font-size="12" font-weight="bold" fill="#4338ca">10.05 m</text>
+<text x="480" y="275" font-size="12" fill="#64748b">Volume: 69,652 flights | Dist: 1557 mi</text>
+<text x="40" y="314" font-size="13" font-weight="600" fill="#334155">ATL-SFO</text>
+<rect x="130" y="295" width="281" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="421" y="313" font-size="12" font-weight="bold" fill="#4338ca">10.04 m</text>
+<text x="480" y="313" font-size="12" fill="#64748b">Volume: 69,754 flights | Dist: 1554 mi</text>
+<text x="40" y="352" font-size="13" font-weight="600" fill="#334155">ORD-MIA</text>
+<rect x="130" y="333" width="280" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="420" y="351" font-size="12" font-weight="bold" fill="#4338ca">10.03 m</text>
+<text x="480" y="351" font-size="12" fill="#64748b">Volume: 70,192 flights | Dist: 1551 mi</text>
+<text x="40" y="390" font-size="13" font-weight="600" fill="#334155">ORD-SEA</text>
+<rect x="130" y="371" width="280" height="26" rx="4" fill="#6366f1" fill-opacity="0.85"/>
+<text x="420" y="389" font-size="12" font-weight="bold" fill="#4338ca">10.02 m</text>
+<text x="480" y="389" font-size="12" fill="#64748b">Volume: 69,726 flights | Dist: 1547 mi</text>
+<line x1="40" y1="420" x2="710" y2="420" stroke="#e2e8f0" stroke-width="1"/>
+<text x="40" y="440" font-size="12" fill="#94a3b8">Source: DuckDB Aggregation over Silver Parquet</text>
+</svg>
