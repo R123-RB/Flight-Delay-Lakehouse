@@ -93,3 +93,4 @@ erDiagram
 ### Dimension: `dim_aircraft`
 - **Keys:** `Airbus A320`, `Boeing 737`, `Boeing 777`.
 - **Role:** Fleet categorization.
+

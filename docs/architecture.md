@@ -80,6 +80,12 @@ flowchart TD
   - Cause breakdown flags: `is_weather_delay`, `is_carrier_delay`, `is_nas_security_delay`.
 - **Missingness Handling:** Structurally preserves missing `delay_reason` because nulls represent on-time flights (`delay_minutes <= 0`), preventing false imputation.
 
+### Orchestration (Apache Airflow)
+- **Engine:** Apache Airflow DAG (`flight_delay_lakehouse_pipeline`).
+- **DAG File:** `airflow/dags/flight_delay_pipeline.py`.
+- **Tasks & Flow:** `ingest_bronze >> clean_transform_silver >> great_expectations_validation >> build_gold_marts >> generate_visualizations`.
+- **Execution:** Airflow scheduler/runner triggers daily batch runs, manages retries, enforces quality gates, and logs task states.
+
 ### Quality Gate (Great Expectations)
 - **Framework:** Great Expectations standard specification.
 - **Blocking Gate:** Downstream Gold layer execution is halted if any data quality check fails.
@@ -94,3 +100,4 @@ flowchart TD
   4. `airport_bottlenecks`: Origin departure delays versus destination arrival delays across 9 major airport hubs.
   5. `temporal_trends`: Hourly departure congestion curve across 24 hours.
   6. `aircraft_summary`: Fleet reliability by aircraft type (Boeing 737, Boeing 777, Airbus A320).
+

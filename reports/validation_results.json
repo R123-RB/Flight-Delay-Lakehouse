@@ -1,14 +1,14 @@
 {
   "evaluation_engine": "Great Expectations Specification Engine v1.0",
   "expectation_suite_name": "flight_silver_suite",
-  "run_id": "20261104_084327",
+  "run_id": "20261104_104047",
   "success": false,
   "statistics": {
     "evaluated_expectations": 35,
     "successful_expectations": 34,
     "unsuccessful_expectations": 1,
     "success_percent": 97.14,
-    "duration_seconds": 0.227
+    "duration_seconds": 0.199
   },
   "results": [
     {

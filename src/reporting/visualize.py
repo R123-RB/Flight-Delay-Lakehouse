@@ -249,3 +249,4 @@ if __name__ == "__main__":
     parser.add_argument("--figures", default=None, help="Directory to save figures")
     args = parser.parse_args()
     generate_all_visualizations(args.gold, args.figures)
+

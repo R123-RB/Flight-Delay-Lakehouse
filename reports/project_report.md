@@ -13,7 +13,7 @@ This capstone project implements an end-to-end, reproducible batch **Lakehouse D
 - Data cleansing, standardization, and derivation of key aviation attributes, specifically the **`largest_delay_factor`** and **`delay_severity`** categories.
 - Strict data quality enforcement using a 34-rule **Great Expectations** suite that validates schemas, boundary conditions, and missingness thresholds while blocking downstream failures.
 - High-speed analytical SQL processing using **DuckDB**, materializing 6 Gold dimensional marts in under 1 second.
-- Visualizations, automated unit/integration testing (100% pass rate across 16 tests), an interactive Jupyter Notebook, and workflow orchestration via CLI and Apache Airflow DAG.
+- Visualizations, automated unit/integration testing (100% pass rate across 19 tests), an interactive Jupyter Notebook, and workflow orchestration exclusively via an Apache Airflow DAG (`airflow/dags/flight_delay_pipeline.py`).
 
 ---
 
@@ -172,7 +172,7 @@ The test suite in `tests/` contains 16 automated test cases executed via Python'
 | **Data Cleaning & Standardization** | Explicit mapping dictionaries, timestamp casting, categorical domain normalization, and derived metrics. |
 | **Data Quality & Governance** | Great Expectations 34-rule validation suite generating JSON and Markdown reports with failure gates. |
 | **Analytical OLAP SQL** | In-process DuckDB queries using CTEs, window functions (`DENSE_RANK()`), and aggregations. |
-| **Workflow Orchestration** | Master CLI pipeline runner (`pipeline.py`) and production Apache Airflow DAG (`flight_delay_pipeline.py`). |
+| **Workflow Orchestration** | Pure Apache Airflow DAG (`airflow/dags/flight_delay_pipeline.py`) with sequential task dependencies and quality failure gates. |
 | **Continuous Integration & Testing** | Comprehensive automated test suite ensuring reproducibility across environments. |
 
 ---

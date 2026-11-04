@@ -91,7 +91,7 @@ flowchart TD
 | **Member 2** | **Data Cleaning & Transformation** | Schema standardization, timestamp parsing, `delay_reason` handling, and `largest_delay_factor` engineering (`src/transformations/clean_flights.py`). |
 | **Member 3** | **Data Validation (Great Expectations)** | 34-rule validation suite (`src/validation/validate_flights.py`), failure blocking gate, and report generation (`reports/validation_report.md`). |
 | **Member 4** | **Querying & Analysis (DuckDB + SQL)** | Dimensional Gold Marts (`src/analytics/build_gold.py`) and analytical SQL query suite (`sql/flight_analysis.sql`). |
-| **Member 5** | **Reporting, Visualisation & Orchestration** | Master pipeline runner (`pipeline.py`), SVG visualizations (`src/reporting/visualize.py`), Airflow DAG, Jupyter Notebook, and documentation. |
+| **Member 5** | **Reporting, Visualisation & Orchestration** | Apache Airflow DAG orchestrator (`airflow/dags/flight_delay_pipeline.py`), SVG visualizations (`src/reporting/visualize.py`), Jupyter Notebook, and documentation. |
 
 ---
 
@@ -149,8 +149,7 @@ Flight Delay Lakehouse/
 │   ├── test_transformations.py           # Unit tests for Silver transformations
 │   ├── test_validation.py                # Unit tests for Great Expectations & failure gate
 │   ├── test_analytics.py                 # Unit tests for Gold layer marts
-│   └── test_pipeline_e2e.py              # End-to-end integration and failure tests
-├── pipeline.py                           # Master pipeline CLI orchestrator
+│   └── test_pipeline_e2e.py              # Airflow DAG end-to-end integration and failure tests
 ├── requirements.txt                      # Project dependency specification
 └── README.md                             # Project documentation
 ```
@@ -161,34 +160,32 @@ Flight Delay Lakehouse/
 
 ### Prerequisites
 - Python 3.10+ (Tested on Python 3.14)
-- Packages: `duckdb`, `pandas`, `pyarrow`, `numpy`
+- Packages: `apache-airflow`, `duckdb`, `pandas`, `pyarrow`, `numpy`
 
-### Quickstart: Run the Complete End-to-End Pipeline
-To run all stages (Ingest → Clean → Validate → Gold Marts → Visualizations):
+### Quickstart: Run the Complete Pipeline via Apache Airflow
+To execute all stages through the Apache Airflow DAG:
 ```bash
-python pipeline.py
+python airflow/dags/flight_delay_pipeline.py
 ```
-*The full end-to-end pipeline processes all 1.74 million records and produces all outputs in ~10 seconds!*
+*The complete Airflow DAG executes all 5 tasks sequentially, processes 1.74M records, and produces all analytical outputs in ~9 seconds!*
 
-### Running Individual Stages via CLI
+### Running Tasks via Airflow CLI
 ```bash
-# 1. Ingestion only (CSV -> Bronze Parquet)
-python pipeline.py --ingest
+# List discovered DAGs in the repository
+airflow dags list
 
-# 2. Cleaning & Transformation only (Bronze -> Silver Parquet)
-python pipeline.py --clean
+# Execute the complete Airflow DAG run
+airflow dags test flight_delay_lakehouse_pipeline
 
-# 3. Data Quality Validation (Great Expectations)
-python pipeline.py --validate
+# Execute individual Airflow tasks
+python airflow/dags/flight_delay_pipeline.py --task ingest_bronze
+python airflow/dags/flight_delay_pipeline.py --task clean_transform_silver
+python airflow/dags/flight_delay_pipeline.py --task great_expectations_validation
+python airflow/dags/flight_delay_pipeline.py --task build_gold_marts
+python airflow/dags/flight_delay_pipeline.py --task generate_visualizations
 
-# 4. Gold Layer Analytics (DuckDB Marts)
-python pipeline.py --gold
-
-# 5. Generate Visualizations only
-python pipeline.py --visualize
-
-# 6. Test Data Quality Failure Handling (deliberately trips validation gate)
-python pipeline.py --validate --simulate-failure
+# Test Airflow DAG failure handling (deliberately trips validation gate and halts execution)
+python airflow/dags/flight_delay_pipeline.py --simulate-failure
 ```
 
 ### Running Automated Test Suite
@@ -225,4 +222,4 @@ This project demonstrates complete mastery over the core competencies in the Dat
 - **Columnar Storage & Serialization:** PyArrow Parquet implementation achieving 87.4% compression ratio.
 - **Data Quality & Governance:** Automated 34-rule Great Expectations validation gate blocking downstream errors.
 - **High-Performance OLAP SQL:** In-process DuckDB queries with window functions, CTEs, and aggregation marts.
-- **Pipeline Orchestration:** Standalone multi-stage Python CLI orchestrator with failure handling and Apache Airflow DAG.
+- **Pipeline Orchestration:** Exclusively powered by Apache Airflow DAG (`flight_delay_pipeline.py`) with task dependencies, task logging, and automated failure handling.

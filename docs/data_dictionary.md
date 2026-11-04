@@ -125,3 +125,4 @@ Fleet performance by equipment model:
 - `avg_delay_minutes`: Mean delay
 - `avg_distance_miles`: Average flight distance
 - `cancelled_flights` & `diverted_flights`: Disruption volume
+
