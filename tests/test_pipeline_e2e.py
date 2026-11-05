@@ -4,7 +4,12 @@ import subprocess
 import sys
 import unittest
 
-from airflow import DAG
+# Airflow is an optional dependency — skip tests gracefully if not installed
+try:
+    from airflow import DAG  # noqa: F401 — import verified here only
+    _AIRFLOW_AVAILABLE = True
+except ImportError:
+    _AIRFLOW_AVAILABLE = False
 
 
 def load_dag_module(dag_path):
@@ -14,6 +19,7 @@ def load_dag_module(dag_path):
     return module
 
 
+@unittest.skipUnless(_AIRFLOW_AVAILABLE, "apache-airflow not installed — skipping Airflow DAG tests")
 class TestAirflowPipelineE2E(unittest.TestCase):
 
     def setUp(self):

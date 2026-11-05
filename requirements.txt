@@ -1,7 +1,8 @@
 pandas
 pyarrow
 duckdb
-great_expectations
 matplotlib
 seaborn
 jupyter
+numpy
+apache-airflow==2.9.3

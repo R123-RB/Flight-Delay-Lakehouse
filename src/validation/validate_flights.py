@@ -17,9 +17,11 @@ def get_default_paths():
 
 class GreatExpectationsValidator:
     """
-    Great Expectations Compliant Validation Engine.
-    Executes GX expectation suites against datasets, produces GX-standard
-    evaluation results, and exports JSON/Markdown reports.
+    Custom Validation Engine modeled on the Great Expectations specification.
+    Implements the same expectation method names, kwargs structure, and
+    JSON result schema as the Great Expectations library, allowing a
+    drop-in upgrade to the real library in future. Reports are fully
+    GE-compatible (suite_name, run_id, evaluated_expectations, etc.).
     """
 
     def __init__(self, df: pd.DataFrame, suite_name: str = "flight_silver_suite"):
@@ -149,7 +151,7 @@ class GreatExpectationsValidator:
         overall_success = unsuccessful_eval == 0
 
         summary = {
-            "evaluation_engine": "Great Expectations Specification Engine v1.0",
+            "evaluation_engine": "Custom Validation Engine (Great Expectations-compatible) v1.0",
             "expectation_suite_name": self.suite_name,
             "run_id": datetime.now().strftime("%Y%m%d_%H%M%S"),
             "success": overall_success,
@@ -199,7 +201,7 @@ def run_great_expectations_suite(df: pd.DataFrame, simulate_failure: bool = Fals
     validator.expect_column_values_to_be_between("distance", min_value=1, max_value=5000)
     validator.expect_column_values_to_be_between("departure_hour", min_value=0, max_value=23)
 
-    # 5. Missing Data Thresholds (Handwritten Note Requirement)
+    # 5. Missing Data Thresholds
     # The missingness of delay_reason corresponds to on-time/early flights (~26.8%)
     validator.expect_column_missingness_to_be_between("delay_reason", min_percent=20.0, max_percent=35.0)
 

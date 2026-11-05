@@ -13,7 +13,7 @@ The **Flight Delay Lakehouse** project builds a compact, realistic, and reproduc
 The core goal is to demonstrate how large-scale aviation data is:
 1. **Ingested** from raw CSV into columnar Parquet (**Bronze Layer**).
 2. **Cleaned & Standardized** with snake_case naming, parsed timestamps, handled nulls, and derived features including the primary **`largest_delay_factor`** (**Silver Layer**).
-3. **Validated** using a formal **Great Expectations** quality gate (34 expectations covering schema, ranges, uniqueness, and missingness thresholds).
+3. **Validated** using a formal **custom validation engine modeled on Great Expectations** (34 expectations covering schema, ranges, uniqueness, and missingness thresholds).
 4. **Queried & Materialized** into analytical data marts using **DuckDB** and OLAP SQL (**Gold Layer**).
 5. **Surfaced** into actionable business insights, vector visualizations, an interactive Jupyter Notebook, and comprehensive reporting.
 
@@ -40,7 +40,7 @@ flowchart TD
     end
 
     subgraph S4 ["4. Data Quality Gate"]
-        val["Great Expectations Suite<br/>src/validation/validate_flights.py<br/>34 Assertions (100% Passed)"]
+        val["Custom Validation Engine<br/>(Great Expectations-compatible)<br/>src/validation/validate_flights.py<br/>34 Assertions (100% Passed)"]
         silver --> val
     end
 
@@ -75,11 +75,11 @@ flowchart TD
   - Standardized column schema into `snake_case`.
   - Parsed all four timestamps to standard ISO datetimes.
   - Investigated missing `delay_reason`: structurally missing because it corresponds to on-time/early flights (`delay_minutes <= 0`).
-  - Derived **`largest_delay_factor`**: identifies whether the primary cause was Weather, Carrier Maintenance, Air Traffic Control / Security, or None (On-Time).
+  - Derived **`largest_delay_factor`**: identifies the primary cause for each flight. Possible values: `None (On-Time / Early)`, `Flight Cancelled`, `Flight Diverted`, `Weather Delay`, `Carrier Equipment / Maintenance`, `Air Traffic Control / NAS Delay`.
   - Derived **`delay_severity`**, corridor **`route`**, and operational **`flight_status`**.
-- **Data Quality:** Comprehensive Great Expectations validation suite verifying 34 business rules, range boundaries (-10 to 30 min delay), non-null primary keys, and missingness thresholds.
+- **Data Quality:** Comprehensive custom validation engine (Great Expectations-compatible) verifying 34 business rules, range boundaries (-10 to 30 min delay), non-null primary keys, and missingness thresholds.
 - **Analytics Engine:** **DuckDB** in-process columnar SQL engine querying Silver Parquet and generating 6 Gold analytical marts in sub-second times.
-- **Deliverables:** Reproducible code repository, test suite, Great Expectations JSON/Markdown reports, vector SVG charts, Jupyter Notebook, and final report.
+- **Deliverables:** Reproducible code repository, test suite, custom validation JSON/Markdown reports, vector SVG charts, Jupyter Notebook, and final report.
 
 ---
 
@@ -89,7 +89,7 @@ flowchart TD
 | :---: | :--- | :--- |
 | **Member 1** | **Data Ingestion & Storage** | Dataset profiling, Bronze Parquet conversion (`src/ingestion/ingest.py`), and storage/read benchmarking. |
 | **Member 2** | **Data Cleaning & Transformation** | Schema standardization, timestamp parsing, `delay_reason` handling, and `largest_delay_factor` engineering (`src/transformations/clean_flights.py`). |
-| **Member 3** | **Data Validation (Great Expectations)** | 34-rule validation suite (`src/validation/validate_flights.py`), failure blocking gate, and report generation (`reports/validation_report.md`). |
+| **Member 3** | **Data Validation (Custom Engine)** | 34-rule custom validation engine modeled on Great Expectations (`src/validation/validate_flights.py`), failure blocking gate, and report generation (`reports/validation_report.md`). |
 | **Member 4** | **Querying & Analysis (DuckDB + SQL)** | Dimensional Gold Marts (`src/analytics/build_gold.py`) and analytical SQL query suite (`sql/flight_analysis.sql`). |
 | **Member 5** | **Reporting, Visualisation & Orchestration** | Apache Airflow DAG orchestrator (`airflow/dags/flight_delay_pipeline.py`), SVG visualizations (`src/reporting/visualize.py`), Jupyter Notebook, and documentation. |
 
@@ -128,8 +128,8 @@ Flight Delay Lakehouse/
 │   │   ├── hourly_delay_trend.svg
 │   │   ├── delay_factor_distribution.svg
 │   │   └── airport_bottlenecks.svg
-│   ├── validation_report.md              # Great Expectations human-readable report
-│   ├── validation_results.json           # Great Expectations machine-readable results
+│   ├── validation_report.md              # Custom validation engine human-readable report
+│   ├── validation_results.json           # Custom validation engine machine-readable results
 │   └── project_report.md                 # Formal Capstone Final Project Report
 ├── sql/
 │   └── flight_analysis.sql               # 10 comprehensive analytical SQL queries (DuckDB)
@@ -139,7 +139,7 @@ Flight Delay Lakehouse/
 │   ├── transformations/
 │   │   └── clean_flights.py              # Silver cleaning & feature engineering
 │   ├── validation/
-│   │   └── validate_flights.py           # Great Expectations quality gate
+│   │   └── validate_flights.py           # Custom validation engine (Great Expectations-compatible)
 │   ├── analytics/
 │   │   └── build_gold.py                 # DuckDB Gold Marts builder
 │   └── reporting/
@@ -147,7 +147,7 @@ Flight Delay Lakehouse/
 ├── tests/
 │   ├── test_ingestion.py                 # Unit tests for Bronze ingestion
 │   ├── test_transformations.py           # Unit tests for Silver transformations
-│   ├── test_validation.py                # Unit tests for Great Expectations & failure gate
+│   ├── test_validation.py                # Unit tests for custom validation engine & failure gate
 │   ├── test_analytics.py                 # Unit tests for Gold layer marts
 │   └── test_pipeline_e2e.py              # Airflow DAG end-to-end integration and failure tests
 ├── requirements.txt                      # Project dependency specification
@@ -189,7 +189,7 @@ python airflow/dags/flight_delay_pipeline.py --simulate-failure
 ```
 
 ### Running Automated Test Suite
-To execute all 16 automated unit and integration tests:
+To execute all **19** automated unit and integration tests:
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
@@ -204,15 +204,30 @@ python -m unittest discover -s tests -p "test_*.py" -v
 - Across all four carriers, on-time rate consistently hovers at ~26.8%, reflecting uniform operating schedules.
 
 ### 2. Root Cause of Flight Delays (`largest_delay_factor`)
-- Early or on-time flights (`delay_minutes <= 0`) account for all 468,873 rows with missing `delay_reason`.
-- For delayed flights (`delay_minutes > 0`), delays are equally distributed across three primary factors:
-  - **Weather:** 426,098 flights (avg delay: 15.49 min)
-  - **Carrier Maintenance:** 426,168 flights (avg delay: 15.50 min)
-  - **Air Traffic Control / Security:** 426,488 flights (avg delay: 15.50 min)
+`largest_delay_factor` applies a priority hierarchy: Cancelled > Diverted > delay-cause > On-Time. All six values and their counts are:
+- **Flight Cancelled:** 873,193 flights
+- **Flight Diverted:** 436,583 flights
+- **Weather Delay:** 106,651 flights (avg delay: 15.49 min)
+- **Carrier Equipment / Maintenance:** 106,877 flights (avg delay: 15.50 min)
+- **Air Traffic Control / NAS Delay:** 107,131 flights (avg delay: 15.50 min)
+- **None (On-Time / Early):** 117,192 flights
+
+> **Note:** The raw `delay_reason` column (which records only non-cancelled, non-diverted, delayed flights) distributes ~426k equally across Weather, Carrier, and ATC — a different count basis from `largest_delay_factor`.
 
 ### 3. Flight Corridors & Airport Bottlenecks
-- The top corridors by average delay are **JFK-MIA**, **LAX-BOS**, and **ATL-SEA**.
-- **JFK** is the largest dual-role congestion hub with over 698,000 total operations (departures + arrivals), followed by **ORD**, **ATL**, and **LAX**.
+- The top corridors by average delay are **JFK-MIA**, **LAX-BOS**, and **ATL-SEA**. All 25 routes perform almost identically (gap between best and worst is ~0.03 min — statistical noise).
+- **JFK** appears as the top-volume hub with 698,568 movements because it is the **only airport serving as both an origin and a destination**, so it is counted twice. Airports such as ORD, ATL, LAX, and DFW are purely origins (~350k each).
+
+---
+
+## 7b. Data Limitations
+
+> **Important:** The dataset is **synthetically generated** for educational purposes. The following characteristics should be noted:
+
+- **~50% cancellation rate across all carriers** — real-world rates are <3%. This is an artefact of synthetic data generation.
+- **Uniform averages** — delay, distance, and on-time rates are virtually identical across all carriers, routes, and time-of-day, so no meaningful operational pattern can be inferred.
+- **Carrier performance gaps are noise-level** — Delta vs Southwest differ by only 0.05 min in average delay.
+- **delay_reason vs largest_delay_factor counts differ** — `delay_reason` counts only delayed flights (~426k per cause); `largest_delay_factor` applies a Cancelled > Diverted > cause > On-Time priority and produces different counts (see Section 7.2 above).
 
 ---
 
@@ -220,6 +235,6 @@ python -m unittest discover -s tests -p "test_*.py" -v
 This project demonstrates complete mastery over the core competencies in the Data Engineering curriculum:
 - **Lakehouse Architecture & Medallion Pattern:** Segregation of concerns into Bronze, Silver, and Gold layers.
 - **Columnar Storage & Serialization:** PyArrow Parquet implementation achieving 87.4% compression ratio.
-- **Data Quality & Governance:** Automated 34-rule Great Expectations validation gate blocking downstream errors.
+- **Data Quality & Governance:** Automated 34-rule custom validation engine (Great Expectations-compatible) blocking downstream errors.
 - **High-Performance OLAP SQL:** In-process DuckDB queries with window functions, CTEs, and aggregation marts.
 - **Pipeline Orchestration:** Exclusively powered by Apache Airflow DAG (`flight_delay_pipeline.py`) with task dependencies, task logging, and automated failure handling.

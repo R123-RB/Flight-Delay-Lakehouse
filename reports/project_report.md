@@ -11,9 +11,9 @@
 This capstone project implements an end-to-end, reproducible batch **Lakehouse Data Engineering Pipeline** analyzing a large-scale aviation dataset from Kaggle comprising **1,747,627 flight records**. Adopting the modern **Medallion Architecture** (Bronze → Silver → Gold), the project demonstrates:
 - Columnar storage and compression via **Apache Parquet**, achieving an **87.4% storage reduction** (7.92x compression ratio).
 - Data cleansing, standardization, and derivation of key aviation attributes, specifically the **`largest_delay_factor`** and **`delay_severity`** categories.
-- Strict data quality enforcement using a 34-rule **Great Expectations** suite that validates schemas, boundary conditions, and missingness thresholds while blocking downstream failures.
+- Strict data quality enforcement using a 34-rule **custom validation engine modeled on Great Expectations** that validates schemas, boundary conditions, and missingness thresholds while blocking downstream failures.
 - High-speed analytical SQL processing using **DuckDB**, materializing 6 Gold dimensional marts in under 1 second.
-- Visualizations, automated unit/integration testing (100% pass rate across 19 tests), an interactive Jupyter Notebook, and workflow orchestration exclusively via an Apache Airflow DAG (`airflow/dags/flight_delay_pipeline.py`).
+- Visualizations, automated unit/integration testing (100% pass rate across **19 tests**), an interactive Jupyter Notebook, and workflow orchestration exclusively via an Apache Airflow DAG (`airflow/dags/flight_delay_pipeline.py`).
 
 ---
 
@@ -92,10 +92,10 @@ Aviation delays cause billions of dollars in losses annually and disrupt travel 
 
 ---
 
-## 5. Data Quality & Governance (Great Expectations)
-Implemented in `src/validation/validate_flights.py`, the validation suite evaluates 34 distinct assertions:
+## 5. Data Quality & Governance (Custom Validation Engine)
+Implemented in `src/validation/validate_flights.py`, the validation engine is a **custom engine modeled on the Great Expectations specification** (same method names, kwargs, and JSON output schema). It evaluates 34 distinct assertions:
 1. **Row Count Consistency:** Table row count between 1,000,000 and 3,000,000 (Observed: 1,747,627).
-2. **Schema Completeness:** All 29 expected columns exist with correct types.
+2. **Schema Completeness:** 20 key columns are checked for existence (not all 29 Silver columns are schema-checked).
 3. **Primary Key Integrity:** `flight_id` has 0 nulls and 0 duplicates (100% unique).
 4. **Entity Non-Null Constraints:** `airline`, `origin`, and `destination` have 0 null values.
 5. **Categorical Domain Sets:** `airline` belongs strictly to `['American Airlines', 'Delta', 'Southwest', 'United']`.
@@ -137,11 +137,11 @@ Querying `data/gold/route_summary.parquet` (top 5 worst routes):
 | **LAX-SFO** | LAX | SFO | 70,250 | **10.04** | 73.23% | 1,549 |
 | **JFK-SFO** | JFK | SFO | 69,720 | **10.03** | 73.28% | 1,557 |
 
-*Insight:* Long transcontinental routes and heavy Northeast-to-Florida corridors experience the most consistent delay propagation.
+*Insight:* All routes perform almost identically — the best and worst routes differ by only ~0.03 minutes in average delay, which is within statistical noise. Every route spans approximately 1,550 miles, so no meaningful pattern separates corridors by delay magnitude.
 
 ### 6.3 Airport Hub Bottlenecks
 Querying `data/gold/airport_bottlenecks.parquet`:
-- **JFK** is the single highest-volume bottleneck hub with **698,568 total flight movements** (departures + arrivals), averaging ~10 minutes delay across both origin departures and destination arrivals.
+- **JFK** appears as the single highest-volume bottleneck hub with **698,568 total flight movements** because JFK is the **only airport that is both an origin and a destination** in this dataset, so its movements are counted twice (once as departures, once as arrivals). Airports that are exclusively origins (ORD, ATL, LAX, DFW, ATL) or exclusively destinations (BOS, MIA, SEA, SFO) are counted once only.
 - **ORD** (350,059 departures), **ATL** (349,767 departures), and **LAX** (349,667 departures) represent major origin congestion sources.
 
 ### 6.4 Hourly Diurnal Patterns
@@ -152,14 +152,14 @@ Querying `data/gold/temporal_trends.parquet`:
 ---
 
 ## 7. Automated Testing & Verification
-The test suite in `tests/` contains 16 automated test cases executed via Python's standard `unittest` framework:
-- `test_ingestion.py`: Verifies Bronze Parquet existence, row count preservation, 16-column schema, and compression ratio > 4x.
-- `test_transformations.py`: Verifies snake_case normalization, datetime parsing, critical non-null constraints, and `largest_delay_factor` logic.
-- `test_validation.py`: Verifies Great Expectations 100% pass rate, report existence, and simulated failure detection.
-- `test_analytics.py`: Verifies the generation and row invariants of all 6 Gold Parquet marts.
-- `test_pipeline_e2e.py`: Executes end-to-end stage-by-stage execution and failure blocking.
+The test suite in `tests/` contains **19 automated test cases** executed via Python's standard `unittest` framework:
+- `test_ingestion.py`: Verifies Bronze Parquet existence, row count preservation, 16-column schema, and compression ratio > 4x. *(4 tests)*
+- `test_transformations.py`: Verifies snake_case normalization, datetime parsing, critical non-null constraints, and `largest_delay_factor` logic. *(4 tests)*
+- `test_validation.py`: Verifies custom validation engine 100% pass rate, report existence, and simulated failure detection. *(3 tests)*
+- `test_analytics.py`: Verifies the generation and row invariants of all 6 Gold Parquet marts. *(3 tests)*
+- `test_pipeline_e2e.py`: Executes end-to-end stage-by-stage execution and failure blocking. *(5 tests)*
 
-**Test Execution Result:** `Ran 16 tests in 24.1s ... OK (100% Passed)`.
+**Test Execution Result:** `Ran 19 tests in 24.1s ... OK (100% Passed)`.
 
 ---
 
@@ -170,12 +170,31 @@ The test suite in `tests/` contains 16 automated test cases executed via Python'
 | **Lakehouse Architecture** | Medallion design pattern (Bronze → Silver → Gold) isolating raw, curated, and consumption layers. |
 | **Columnar File Storage** | Apache Parquet format with Snappy compression, saving 87.4% disk footprint and optimizing I/O. |
 | **Data Cleaning & Standardization** | Explicit mapping dictionaries, timestamp casting, categorical domain normalization, and derived metrics. |
-| **Data Quality & Governance** | Great Expectations 34-rule validation suite generating JSON and Markdown reports with failure gates. |
+| **Data Quality & Governance** | Custom validation engine modeled on Great Expectations — 34-rule suite generating JSON and Markdown reports with failure gates. |
 | **Analytical OLAP SQL** | In-process DuckDB queries using CTEs, window functions (`DENSE_RANK()`), and aggregations. |
 | **Workflow Orchestration** | Pure Apache Airflow DAG (`airflow/dags/flight_delay_pipeline.py`) with sequential task dependencies and quality failure gates. |
 | **Continuous Integration & Testing** | Comprehensive automated test suite ensuring reproducibility across environments. |
 
 ---
 
+## 8b. Data Limitations
+
+> [!NOTE]
+> The dataset used in this project is **synthetically generated** for educational and demonstration purposes.
+
+The following characteristics reflect the synthetic nature of the data and would not be expected in real-world aviation records:
+
+| Limitation | Detail |
+| :--- | :--- |
+| **~50% cancellation rate** | Every airline records a cancellation rate of approximately 49.9–50.0%. Real-world cancellation rates are typically below 3%. This is an artefact of the synthetic data generation. |
+| **Uniform delay distribution** | Average delay across all carriers, routes, hours, and months is virtually identical at ~10 min. No meaningful seasonality, diurnal, or carrier pattern exists. |
+| **Identical route distances** | All 25 origin-destination pairs report average distances between 1,548–1,557 miles, which is unrealistic. |
+| **Delay cause counts differ by count basis** | `delay_reason` values (Weather, Carrier, ATC — ~426k each) measure *raw delays only*. `largest_delay_factor` values (Weather: 106,651; Carrier: 106,877; ATC: 107,131; Cancelled: 873,193; Diverted: 436,583; On-Time: 117,192) measure *prioritised cause after removing Cancelled and Diverted flights first*. |
+| **JFK double-counted in airport rankings** | JFK is the only airport that serves as both an origin and a destination, resulting in its volume (698,568) being approximately double that of pure-origin airports (ORD: ~350,059). Rankings by delay rate rather than volume are more meaningful. |
+
+These limitations are acknowledged and do not affect the validity of the **data engineering methodology** demonstrated by this project.
+
+---
+
 ## 9. Conclusion
-The **Flight Delay Lakehouse** project demonstrates a complete, highly optimized, and reproducible modern data engineering workflow. By coupling Apache Parquet, vectorized Pandas transformations, Great Expectations data governance, and DuckDB analytical querying, the pipeline processes nearly 1.75 million aviation records end-to-end in approximately 10 seconds. All capstone requirements, deliverables, and team objectives have been fulfilled.
+The **Flight Delay Lakehouse** project demonstrates a complete, highly optimized, and reproducible modern data engineering workflow. By coupling Apache Parquet, vectorized Pandas transformations, a custom Great-Expectations-compatible validation engine, and DuckDB analytical querying, the pipeline processes nearly 1.75 million aviation records end-to-end in approximately 10 seconds. All capstone requirements, deliverables, and team objectives have been fulfilled.

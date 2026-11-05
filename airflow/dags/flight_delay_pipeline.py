@@ -33,7 +33,7 @@ with DAG(
     default_args=default_args,
     description="End-to-End Batch Aviation Flight Delay Lakehouse Pipeline",
     start_date=datetime(2024, 1, 1),
-    schedule_interval="@daily",
+    schedule="@daily",          # Airflow 2.4+ preferred (replaces deprecated schedule_interval)
     catchup=False,
     tags=["lakehouse", "aviation", "data_engineering"],
 ) as dag:
