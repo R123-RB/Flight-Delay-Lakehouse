@@ -1,10 +1,10 @@
 # Great Expectations Data Quality Validation Report
 
 **Suite Name:** `flight_silver_suite`  
-**Execution Timestamp:** `20261104_104047`  
+**Execution Timestamp:** `20261104_104301`  
 **Validation Status:** 🔴 **FAILED**  
 **Success Rate:** 97.14% (34/35 passed)  
-**Duration:** 0.199s
+**Duration:** 0.196s
 
 ## Summary Statistics
 
