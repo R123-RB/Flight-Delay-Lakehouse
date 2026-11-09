@@ -1,60 +1,96 @@
-<svg width="750" height="430" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">
-<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Airport Hub Delay & Congestion Analysis</text>
+<svg width="750" height="670" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">
+<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Airport Hub Delay &amp; Congestion Analysis</text>
 <text x="40" y="70" font-size="13" fill="#64748b">Origin vs Destination arrival delay performance across major airport hubs</text>
-<text x="40" y="128" font-size="13" font-weight="bold" fill="#1e293b">JFK</text>
-<text x="90" y="128" font-size="12" fill="#64748b">698,568 ops</text>
-<rect x="230" y="110" width="180" height="14" rx="3" fill="#3b82f6"/>
-<text x="420" y="121" font-size="10" fill="#1d4ed8">Origin: 10.01m</text>
-<rect x="440" y="110" width="179" height="14" rx="3" fill="#f97316"/>
-<text x="629" y="121" font-size="10" fill="#c2410c">Dest: 9.98m</text>
-<text x="40" y="160" font-size="13" font-weight="bold" fill="#1e293b">MIA</text>
-<text x="90" y="160" font-size="12" fill="#64748b">350,443 ops</text>
-<rect x="230" y="142" width="0" height="14" rx="3" fill="#3b82f6"/>
-<text x="240" y="153" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
-<rect x="440" y="142" width="180" height="14" rx="3" fill="#f97316"/>
-<text x="630" y="153" font-size="10" fill="#c2410c">Dest: 10.01m</text>
-<text x="40" y="192" font-size="13" font-weight="bold" fill="#1e293b">ORD</text>
-<text x="90" y="192" font-size="12" fill="#64748b">350,059 ops</text>
-<rect x="230" y="174" width="180" height="14" rx="3" fill="#3b82f6"/>
-<text x="420" y="185" font-size="10" fill="#1d4ed8">Origin: 10.0m</text>
-<rect x="440" y="174" width="0" height="14" rx="3" fill="#f97316"/>
-<text x="450" y="185" font-size="10" fill="#c2410c">Dest: 0.0m</text>
-<text x="40" y="224" font-size="13" font-weight="bold" fill="#1e293b">ATL</text>
-<text x="90" y="224" font-size="12" fill="#64748b">349,767 ops</text>
-<rect x="230" y="206" width="180" height="14" rx="3" fill="#3b82f6"/>
-<text x="420" y="217" font-size="10" fill="#1d4ed8">Origin: 10.01m</text>
-<rect x="440" y="206" width="0" height="14" rx="3" fill="#f97316"/>
-<text x="450" y="217" font-size="10" fill="#c2410c">Dest: 0.0m</text>
+<text x="40" y="128" font-size="13" font-weight="bold" fill="#1e293b">ATL</text>
+<text x="90" y="128" font-size="12" fill="#64748b">693,740 ops</text>
+<rect x="230" y="110" width="168" height="14" rx="3" fill="#3b82f6"/>
+<text x="408" y="121" font-size="10" fill="#1d4ed8">Origin: 9.34m</text>
+<rect x="440" y="110" width="150" height="14" rx="3" fill="#f97316"/>
+<text x="600" y="121" font-size="10" fill="#c2410c">Dest: 8.35m</text>
+<text x="40" y="160" font-size="13" font-weight="bold" fill="#1e293b">ORD</text>
+<text x="90" y="160" font-size="12" fill="#64748b">571,790 ops</text>
+<rect x="230" y="142" width="254" height="14" rx="3" fill="#3b82f6"/>
+<text x="494" y="153" font-size="10" fill="#1d4ed8">Origin: 14.15m</text>
+<rect x="440" y="142" width="202" height="14" rx="3" fill="#f97316"/>
+<text x="652" y="153" font-size="10" fill="#c2410c">Dest: 11.26m</text>
+<text x="40" y="192" font-size="13" font-weight="bold" fill="#1e293b">DFW</text>
+<text x="90" y="192" font-size="12" fill="#64748b">479,133 ops</text>
+<rect x="230" y="174" width="207" height="14" rx="3" fill="#3b82f6"/>
+<text x="447" y="185" font-size="10" fill="#1d4ed8">Origin: 11.53m</text>
+<rect x="440" y="174" width="180" height="14" rx="3" fill="#f97316"/>
+<text x="630" y="185" font-size="10" fill="#c2410c">Dest: 10.02m</text>
+<text x="40" y="224" font-size="13" font-weight="bold" fill="#1e293b">DEN</text>
+<text x="90" y="224" font-size="12" fill="#64748b">392,065 ops</text>
+<rect x="230" y="206" width="213" height="14" rx="3" fill="#3b82f6"/>
+<text x="453" y="217" font-size="10" fill="#1d4ed8">Origin: 11.84m</text>
+<rect x="440" y="206" width="192" height="14" rx="3" fill="#f97316"/>
+<text x="642" y="217" font-size="10" fill="#c2410c">Dest: 10.69m</text>
 <text x="40" y="256" font-size="13" font-weight="bold" fill="#1e293b">LAX</text>
-<text x="90" y="256" font-size="12" fill="#64748b">349,667 ops</text>
-<rect x="230" y="238" width="179" height="14" rx="3" fill="#3b82f6"/>
-<text x="419" y="249" font-size="10" fill="#1d4ed8">Origin: 9.99m</text>
-<rect x="440" y="238" width="0" height="14" rx="3" fill="#f97316"/>
-<text x="450" y="249" font-size="10" fill="#c2410c">Dest: 0.0m</text>
-<text x="40" y="288" font-size="13" font-weight="bold" fill="#1e293b">BOS</text>
-<text x="90" y="288" font-size="12" fill="#64748b">349,665 ops</text>
-<rect x="230" y="270" width="0" height="14" rx="3" fill="#3b82f6"/>
-<text x="240" y="281" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
-<rect x="440" y="270" width="179" height="14" rx="3" fill="#f97316"/>
-<text x="629" y="281" font-size="10" fill="#c2410c">Dest: 9.99m</text>
-<text x="40" y="320" font-size="13" font-weight="bold" fill="#1e293b">SFO</text>
-<text x="90" y="320" font-size="12" fill="#64748b">349,110 ops</text>
-<rect x="230" y="302" width="0" height="14" rx="3" fill="#3b82f6"/>
-<text x="240" y="313" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
-<rect x="440" y="302" width="180" height="14" rx="3" fill="#f97316"/>
-<text x="630" y="313" font-size="10" fill="#c2410c">Dest: 10.02m</text>
-<text x="40" y="352" font-size="13" font-weight="bold" fill="#1e293b">SEA</text>
-<text x="90" y="352" font-size="12" fill="#64748b">349,049 ops</text>
-<rect x="230" y="334" width="0" height="14" rx="3" fill="#3b82f6"/>
-<text x="240" y="345" font-size="10" fill="#1d4ed8">Origin: 0.0m</text>
-<rect x="440" y="334" width="180" height="14" rx="3" fill="#f97316"/>
-<text x="630" y="345" font-size="10" fill="#c2410c">Dest: 10.0m</text>
-<text x="40" y="384" font-size="13" font-weight="bold" fill="#1e293b">DFW</text>
-<text x="90" y="384" font-size="12" fill="#64748b">348,926 ops</text>
-<rect x="230" y="366" width="179" height="14" rx="3" fill="#3b82f6"/>
-<text x="419" y="377" font-size="10" fill="#1d4ed8">Origin: 9.98m</text>
-<rect x="440" y="366" width="0" height="14" rx="3" fill="#f97316"/>
-<text x="450" y="377" font-size="10" fill="#c2410c">Dest: 0.0m</text>
-<line x1="40" y1="400" x2="710" y2="400" stroke="#e2e8f0" stroke-width="1"/>
-<text x="40" y="420" font-size="12" fill="#94a3b8">Source: DuckDB Airport Bottlenecks Mart (data/gold/airport_bottlenecks.parquet)</text>
+<text x="90" y="256" font-size="12" fill="#64748b">389,369 ops</text>
+<rect x="230" y="238" width="192" height="14" rx="3" fill="#3b82f6"/>
+<text x="432" y="249" font-size="10" fill="#1d4ed8">Origin: 10.67m</text>
+<rect x="440" y="238" width="194" height="14" rx="3" fill="#f97316"/>
+<text x="644" y="249" font-size="10" fill="#c2410c">Dest: 10.83m</text>
+<text x="40" y="288" font-size="13" font-weight="bold" fill="#1e293b">SFO</text>
+<text x="90" y="288" font-size="12" fill="#64748b">295,974 ops</text>
+<rect x="230" y="270" width="201" height="14" rx="3" fill="#3b82f6"/>
+<text x="441" y="281" font-size="10" fill="#1d4ed8">Origin: 11.19m</text>
+<rect x="440" y="270" width="252" height="14" rx="3" fill="#f97316"/>
+<text x="702" y="281" font-size="10" fill="#c2410c">Dest: 14.0m</text>
+<text x="40" y="320" font-size="13" font-weight="bold" fill="#1e293b">PHX</text>
+<text x="90" y="320" font-size="12" fill="#64748b">293,627 ops</text>
+<rect x="230" y="302" width="156" height="14" rx="3" fill="#3b82f6"/>
+<text x="396" y="313" font-size="10" fill="#1d4ed8">Origin: 8.67m</text>
+<rect x="440" y="302" width="136" height="14" rx="3" fill="#f97316"/>
+<text x="586" y="313" font-size="10" fill="#c2410c">Dest: 7.6m</text>
+<text x="40" y="352" font-size="13" font-weight="bold" fill="#1e293b">IAH</text>
+<text x="90" y="352" font-size="12" fill="#64748b">293,305 ops</text>
+<rect x="230" y="334" width="208" height="14" rx="3" fill="#3b82f6"/>
+<text x="448" y="345" font-size="10" fill="#1d4ed8">Origin: 11.58m</text>
+<rect x="440" y="334" width="172" height="14" rx="3" fill="#f97316"/>
+<text x="622" y="345" font-size="10" fill="#c2410c">Dest: 9.6m</text>
+<text x="40" y="384" font-size="13" font-weight="bold" fill="#1e293b">LAS</text>
+<text x="90" y="384" font-size="12" fill="#64748b">266,379 ops</text>
+<rect x="230" y="366" width="197" height="14" rx="3" fill="#3b82f6"/>
+<text x="437" y="377" font-size="10" fill="#1d4ed8">Origin: 10.95m</text>
+<rect x="440" y="366" width="174" height="14" rx="3" fill="#f97316"/>
+<text x="624" y="377" font-size="10" fill="#c2410c">Dest: 9.72m</text>
+<text x="40" y="416" font-size="13" font-weight="bold" fill="#1e293b">MSP</text>
+<text x="90" y="416" font-size="12" fill="#64748b">224,245 ops</text>
+<rect x="230" y="398" width="130" height="14" rx="3" fill="#3b82f6"/>
+<text x="370" y="409" font-size="10" fill="#1d4ed8">Origin: 7.26m</text>
+<rect x="440" y="398" width="142" height="14" rx="3" fill="#f97316"/>
+<text x="592" y="409" font-size="10" fill="#c2410c">Dest: 7.91m</text>
+<text x="40" y="448" font-size="13" font-weight="bold" fill="#1e293b">MCO</text>
+<text x="90" y="448" font-size="12" fill="#64748b">221,962 ops</text>
+<rect x="230" y="430" width="216" height="14" rx="3" fill="#3b82f6"/>
+<text x="456" y="441" font-size="10" fill="#1d4ed8">Origin: 12.05m</text>
+<rect x="440" y="430" width="192" height="14" rx="3" fill="#f97316"/>
+<text x="642" y="441" font-size="10" fill="#c2410c">Dest: 10.72m</text>
+<text x="40" y="480" font-size="13" font-weight="bold" fill="#1e293b">SEA</text>
+<text x="90" y="480" font-size="12" fill="#64748b">221,806 ops</text>
+<rect x="230" y="462" width="122" height="14" rx="3" fill="#3b82f6"/>
+<text x="362" y="473" font-size="10" fill="#1d4ed8">Origin: 6.8m</text>
+<rect x="440" y="462" width="109" height="14" rx="3" fill="#f97316"/>
+<text x="559" y="473" font-size="10" fill="#c2410c">Dest: 6.06m</text>
+<text x="40" y="512" font-size="13" font-weight="bold" fill="#1e293b">DTW</text>
+<text x="90" y="512" font-size="12" fill="#64748b">216,898 ops</text>
+<rect x="230" y="494" width="164" height="14" rx="3" fill="#3b82f6"/>
+<text x="404" y="505" font-size="10" fill="#1d4ed8">Origin: 9.15m</text>
+<rect x="440" y="494" width="157" height="14" rx="3" fill="#f97316"/>
+<text x="607" y="505" font-size="10" fill="#c2410c">Dest: 8.73m</text>
+<text x="40" y="544" font-size="13" font-weight="bold" fill="#1e293b">BOS</text>
+<text x="90" y="544" font-size="12" fill="#64748b">215,698 ops</text>
+<rect x="230" y="526" width="172" height="14" rx="3" fill="#3b82f6"/>
+<text x="412" y="537" font-size="10" fill="#1d4ed8">Origin: 9.61m</text>
+<rect x="440" y="526" width="201" height="14" rx="3" fill="#f97316"/>
+<text x="651" y="537" font-size="10" fill="#c2410c">Dest: 11.19m</text>
+<text x="40" y="576" font-size="13" font-weight="bold" fill="#1e293b">EWR</text>
+<text x="90" y="576" font-size="12" fill="#64748b">203,602 ops</text>
+<rect x="230" y="558" width="245" height="14" rx="3" fill="#3b82f6"/>
+<text x="485" y="569" font-size="10" fill="#1d4ed8">Origin: 13.64m</text>
+<rect x="440" y="558" width="255" height="14" rx="3" fill="#f97316"/>
+<text x="705" y="569" font-size="10" fill="#c2410c">Dest: 14.22m</text>
+<line x1="40" y1="600" x2="710" y2="600" stroke="#e2e8f0" stroke-width="1"/>
+<text x="40" y="620" font-size="12" fill="#94a3b8">Source: DuckDB Airport Bottlenecks Mart (data/gold/airport_bottlenecks.parquet)</text>
 </svg>

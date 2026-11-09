@@ -1,26 +1,26 @@
 {
-  "evaluation_engine": "Great Expectations Specification Engine v1.0",
+  "evaluation_engine": "Custom Validation Engine (Great Expectations-compatible fallback)",
   "expectation_suite_name": "flight_silver_suite",
-  "run_id": "20261104_104301",
+  "run_id": "20261108_172924",
   "success": false,
   "statistics": {
-    "evaluated_expectations": 35,
-    "successful_expectations": 34,
+    "evaluated_expectations": 51,
+    "successful_expectations": 50,
     "unsuccessful_expectations": 1,
-    "success_percent": 97.14,
-    "duration_seconds": 0.196
+    "success_percent": 98.04,
+    "duration_seconds": 1.651
   },
   "results": [
     {
       "expectation_type": "expect_table_row_count_to_be_between",
       "kwargs": {
         "min_value": 1000000,
-        "max_value": 3000000
+        "max_value": 10000000
       },
       "success": true,
       "result": {
-        "observed_value": 1747627,
-        "element_count": 1747627
+        "observed_value": 5819079,
+        "element_count": 5819079
       }
     },
     {
@@ -76,6 +76,46 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
+        "column": "year"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "month"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "day"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "day_of_week"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
         "column": "scheduled_departure"
       },
       "success": true,
@@ -116,7 +156,7 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "delay_minutes"
+        "column": "departure_delay_minutes"
       },
       "success": true,
       "result": {
@@ -126,7 +166,57 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "delay_reason"
+        "column": "arrival_delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "air_system_delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "security_delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "airline_delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "late_aircraft_delay_minutes"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "weather_delay_minutes"
       },
       "success": true,
       "result": {
@@ -156,7 +246,17 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
-        "column": "aircraft_type"
+        "column": "cancellation_reason"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "tail_number"
       },
       "success": true,
       "result": {
@@ -186,7 +286,27 @@
     {
       "expectation_type": "expect_column_to_exist",
       "kwargs": {
+        "column": "departure_date"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
         "column": "departure_hour"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "departure_day_of_week"
       },
       "success": true,
       "result": {
@@ -224,6 +344,36 @@
       }
     },
     {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "is_weather_delay"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "is_carrier_delay"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": {
+        "column": "is_nas_security_delay"
+      },
+      "success": true,
+      "result": {
+        "observed_value": true
+      }
+    },
+    {
       "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "flight_id",
@@ -231,7 +381,7 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0
       }
@@ -243,8 +393,8 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
-        "unique_count": 1747627,
+        "element_count": 5819079,
+        "unique_count": 5819079,
         "unexpected_count": 0
       }
     },
@@ -256,7 +406,7 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0
       }
@@ -266,15 +416,26 @@
       "kwargs": {
         "column": "airline",
         "value_set": [
-          "American Airlines",
-          "Delta",
-          "Southwest",
-          "United"
-        ]
+          "AA",
+          "AS",
+          "B6",
+          "DL",
+          "EV",
+          "F9",
+          "HA",
+          "MQ",
+          "NK",
+          "OO",
+          "UA",
+          "US",
+          "VX",
+          "WN"
+        ],
+        "max_unexpected_percent": 0.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
         "unexpected_examples": []
@@ -288,7 +449,7 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0
       }
@@ -301,7 +462,7 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0
       }
@@ -309,17 +470,35 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "delay_minutes",
-        "min_value": -10,
-        "max_value": 30
+        "column": "departure_delay_minutes",
+        "min_value": -60,
+        "max_value": 2000,
+        "max_unexpected_percent": 1.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5732926,
+        "unexpected_count": 3,
+        "unexpected_percent": 0.0001,
+        "min_observed": -82.0,
+        "max_observed": 1988.0
+      }
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "arrival_delay_minutes",
+        "min_value": -90,
+        "max_value": 2000,
+        "max_unexpected_percent": 1.0
+      },
+      "success": true,
+      "result": {
+        "element_count": 5714008,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
-        "min_observed": -10.0,
-        "max_observed": 30.0
+        "min_observed": -87.0,
+        "max_observed": 1971.0
       }
     },
     {
@@ -327,15 +506,16 @@
       "kwargs": {
         "column": "distance",
         "min_value": 1,
-        "max_value": 5000
+        "max_value": 5000,
+        "max_unexpected_percent": 0.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
-        "min_observed": 100.0,
-        "max_observed": 3000.0
+        "min_observed": 21.0,
+        "max_observed": 4983.0
       }
     },
     {
@@ -343,11 +523,12 @@
       "kwargs": {
         "column": "departure_hour",
         "min_value": 0,
-        "max_value": 23
+        "max_value": 23,
+        "max_unexpected_percent": 0.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
         "min_observed": 0.0,
@@ -357,15 +538,15 @@
     {
       "expectation_type": "expect_column_missingness_to_be_between",
       "kwargs": {
-        "column": "delay_reason",
-        "min_percent": 20.0,
-        "max_percent": 35.0
+        "column": "weather_delay_minutes",
+        "min_percent": 75.0,
+        "max_percent": 90.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
-        "null_count": 468873,
-        "observed_null_percent": 26.8291
+        "element_count": 5819079,
+        "null_count": 4755640,
+        "observed_null_percent": 81.725
       }
     },
     {
@@ -376,7 +557,7 @@
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0
       }
@@ -390,11 +571,12 @@
           "cancelled",
           "diverted",
           "cancelled_and_diverted"
-        ]
+        ],
+        "max_unexpected_percent": 0.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
         "unexpected_examples": []
@@ -407,13 +589,15 @@
         "value_set": [
           "On-Time",
           "Minor Delay (1-15 min)",
-          "Moderate Delay (16-30 min)",
-          "Severe Delay (>30 min)"
-        ]
+          "Moderate Delay (16-60 min)",
+          "Severe Delay (>60 min)",
+          "Not Applicable"
+        ],
+        "max_unexpected_percent": 0.0
       },
       "success": true,
       "result": {
-        "element_count": 1747627,
+        "element_count": 5819079,
         "unexpected_count": 0,
         "unexpected_percent": 0.0,
         "unexpected_examples": []
@@ -422,18 +606,24 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "delay_minutes",
-        "min_value": 100,
-        "max_value": 200
+        "column": "departure_delay_minutes",
+        "min_value": 1000,
+        "max_value": 2000,
+        "max_unexpected_percent": 0.0
       },
       "success": false,
       "result": {
-        "element_count": 1747627,
-        "unexpected_count": 1747627,
-        "unexpected_percent": 100.0,
-        "min_observed": -10.0,
-        "max_observed": 30.0
+        "element_count": 5732926,
+        "unexpected_count": 5732653,
+        "unexpected_percent": 99.9952,
+        "min_observed": -82.0,
+        "max_observed": 1988.0
       }
     }
-  ]
+  ],
+  "great_expectations": {
+    "available": false,
+    "version": null,
+    "error": "No module named 'great_expectations'"
+  }
 }

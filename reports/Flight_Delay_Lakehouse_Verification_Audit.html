@@ -1,0 +1,77 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Flight Delay Lakehouse - Verification Audit</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;margin:28px;color:#111;line-height:1.35}h1{color:#0f2350}h2{color:#0f2350;border-bottom:1px solid #ccd;margin-top:18px}.ok{color:#147832;font-weight:700}.part{color:#aa7800;font-weight:700}.no{color:#963232;font-weight:700}.ev{margin:2px 0 10px 18px;color:#222;font-size:13px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid #c8ceda;padding:6px;vertical-align:top}th{background:#ebedf5}</style></head><body>
+<h1>Flight Delay Lakehouse — Remaining Verification Points Audit</h1>
+<p><b>Date:</b> 2026-11-08<br><b>Method:</b> Static analysis + targeted execution in project <code>.venv</code> (Python 3.14.4, Airflow available). Full 565MB end-to-end rerun, remote CI status, interactive Streamlit, and ML dependencies were not fully exercised where noted.</p>
+<h2>Executive Status</h2>
+<table><tr><th>Priority</th><th>Area</th><th>Status</th><th>Key finding</th></tr>
+<tr><td>Critical</td><td>Pipeline execution</td><td class="part">PARTIAL</td><td>5-stage order verified (run_pipeline + Airflow DAG). Validation failure gate exits 1 (verified). Full <code>run_pipeline.py</code> completion/rerun not executed now.</td></tr>
+<tr><td>Critical</td><td>DuckDB &amp; Gold marts</td><td class="ok">VERIFIED</td><td>6 canonical marts generated; dtypes inspected; regenerated from Silver to <code>/tmp/gold_test</code> (8 outputs including dimension tables).</td></tr>
+<tr><td>Critical</td><td>Data validation</td><td class="ok">VERIFIED</td><td>50 checks on Silver: 50/50 pass. Invalid/duplicate data fails uniqueness; <code>--simulate-failure</code> exits 1. GX-native unavailable in <code>.venv</code>; fallback/custom engine active and documented.</td></tr>
+<tr><td>High</td><td>Airflow</td><td class="part">PARTIAL</td><td>DAG imports (5 tasks/deps). Task execution, dependency chain, failure-callback, and validation-blocking tests passed. Full 5-task run and <code>dag.test()</code> end-to-end not run; slow E2E gated by <code>RUN_SLOW_E2E=1</code>.</td></tr>
+<tr><td>High</td><td>Tests &amp; CI</td><td class="ok">VERIFIED (local)</td><td>Local: 24 tests, <b>23 passed, 1 skipped, 0 failed</b>. Skipped: <code>test_airflow_dag_e2e_run</code> (requires <code>RUN_SLOW_E2E=1</code>). Remote GitHub Actions pass not observable locally.</td></tr>
+<tr><td>High</td><td>Clean reproducibility</td><td class="no">NOT VERIFIED</td><td>No clean-environment from-scratch demo (install deps, raw 565MB data, full pipeline, tests, dashboard) without old artifacts. Fixtures and CI config exist.</td></tr>
+<tr><td>Final</td><td>Dashboard &amp; visualizations</td><td class="part">PARTIAL</td><td>All 5 SVGs valid XML (<code>ET.parse</code>). Streamlit reads <code>data/gold</code> and handles missing marts (static). Live launch and UI metric correctness not interactively verified.</td></tr>
+<tr><td>Final</td><td>ML component</td><td class="no">NOT VERIFIED</td><td><code>predict_delay.py</code> exists. <code>sklearn/joblib</code> missing in <code>.venv</code>; reported 74.67% accuracy not reproduced; train/test split and NumPy fallback not revalidated.</td></tr>
+<tr><td>Final</td><td>Documentation</td><td class="part">PARTIAL</td><td>Core files/paths align; not every README command, architecture diagram detail, or OBT-vs-logical-star wording exhaustively runtime-diffed.</td></tr>
+</table>
+
+<h2>1. Pipeline execution</h2>
+<p class="ok">[VERIFIED] Five stages in correct order</p><p class="ev">Evidence: <code>run_pipeline.py</code> stages: <code>ingest_data -&gt; clean_data -&gt; validate -&gt; build_gold -&gt; generate_all_visualizations</code>. Airflow DAG chain matches.</p>
+<p class="ok">[VERIFIED] Critical failure stops subsequent stages</p><p class="ev">Evidence: <code>validate()</code> calls <code>sys.exit(1)</code> on failure; CLI <code>--simulate-failure</code> returns exit 1; Airflow validation-failure blocking test passed.</p>
+<p class="part">[PARTIAL] <code>run_pipeline.py</code> completes successfully / reruns</p><p class="ev">Evidence: Structure/order valid and Gold layer regenerated from Silver; full 5-stage completion and rerun on full raw data not executed now (time/cost).</p>
+
+<h2>2. DuckDB &amp; Gold marts</h2>
+<p class="ok">[VERIFIED] All six Gold marts generated</p><p class="ev">Evidence: <code>airline_summary</code> (14), <code>route_summary</code> (25), <code>delay_factor_summary</code> (9), <code>airport_bottlenecks</code> (629), <code>temporal_trends</code> (24), <code>aircraft_summary</code> (4898). Plus materialized <code>dim_airline</code>/<code>dim_airport</code>.</p>
+<p class="ok">[VERIFIED] Columns/data types checked</p><p class="ev">Evidence: dtypes inspected (keys string; counts int64/int32; metrics float64; e.g. <code>departure_hour</code> int32).</p>
+<p class="part">[PARTIAL] SQL aggregations/calculations verified</p><p class="ev">Evidence: DuckDB SQL in <code>build_gold.py</code> regenerates marts successfully; not every formula manually recomputed in this audit.</p>
+<p class="ok">[VERIFIED] Gold outputs regenerable</p><p class="ev">Evidence: <code>build_gold()</code> regenerated from Silver to <code>/tmp/gold_test</code> (6 marts + dimensions).</p>
+
+<h2>3. Data validation</h2>
+<p class="ok">[VERIFIED] All 50 checks execute</p><p class="ev">Evidence: Real Silver suite result: evaluated=50, passed=50, success=True.</p>
+<p class="ok">[VERIFIED] Invalid data triggers failure</p><p class="ev">Evidence: Duplicate <code>flight_id</code> fails uniqueness; <code>--simulate-failure</code> fails and exits 1.</p>
+<p class="ok">[VERIFIED] Pipeline stops after critical validation failure</p><p class="ev">Evidence: CLI exit-code gate and Airflow dependency blocking verified.</p>
+<p class="part">[PARTIAL] GX and custom fallback behavior</p><p class="ev">Evidence: GX available=False in <code>.venv</code> (module not installed); fallback/custom GE-style engine active as designed. GX-native path is implemented but not executed in this environment.</p>
+
+<h2>4. Airflow</h2>
+<p class="ok">[VERIFIED] DAG imports without errors</p><p class="ev">Evidence: <code>flight_delay_lakehouse_pipeline</code> imported in <code>.venv</code> with 5 tasks.</p>
+<p class="part">[PARTIAL] All five tasks execute successfully</p><p class="ev">Evidence: <code>ingest_bronze</code> task execution test passed; full 5-task successful run not executed now.</p>
+<p class="part">[PARTIAL] Retry behavior</p><p class="ev">Evidence: Configured <code>retries=1</code>, <code>retry_delay=timedelta(minutes=5)</code>; runtime retry not induced.</p>
+<p class="ok">[VERIFIED] Failure callback</p><p class="ev">Evidence: <code>notify_failure</code> hook test passed; safe when webhook not configured.</p>
+<p class="part">[PARTIAL] <code>dag.test()</code> works</p><p class="ev">Evidence: Runner supports <code>dag.test()</code>; full end-to-end not executed now.</p>
+<p class="ok">[VERIFIED] Airflow separate from sequential runner</p><p class="ev">Evidence: <code>airflow/dags/flight_delay_pipeline.py</code> vs <code>run_pipeline.py</code> are distinct entry points.</p>
+
+<h2>5. Automated tests &amp; CI</h2>
+<p class="ok">[VERIFIED] 23 passed, 1 skipped, 0 failed</p><p class="ev">Evidence: <code>Ran 24 tests in 81.599s, OK (skipped=1)</code>.</p>
+<p class="ok">[VERIFIED] Why E2E skipped</p><p class="ev">Evidence: <code>test_airflow_dag_e2e_run</code> skips unless <code>RUN_SLOW_E2E=1</code>.</p>
+<p class="no">[NOT VERIFIED] GitHub Actions passes</p><p class="ev">Evidence: Workflow configured (<code>.github/workflows/ci.yml</code>); remote CI result not observable locally.</p>
+<p class="part">[PARTIAL] Fixture works without old generated outputs</p><p class="ev">Evidence: <code>tests/fixtures/sample_flights.csv</code> and fixture-aware/CI config exist; clean destructive run not performed.</p>
+
+<h2>6. Dashboard &amp; visualizations</h2>
+<p class="no">[NOT VERIFIED] Streamlit launches</p><p class="ev">Evidence: Not interactively launched.</p>
+<p class="ok">[VERIFIED - static] Reads Gold / missing-file behavior</p><p class="ev">Evidence: App reads <code>data/gold</code> and reports missing marts; Gold outputs present.</p>
+<p class="no">[NOT VERIFIED] Displayed metrics/charts correct</p><p class="ev">Evidence: UI rendering not checked.</p>
+<p class="ok">[VERIFIED] SVG generation/clipping/rendering (XML)</p><p class="ev">Evidence: All 5 SVGs parse OK: <code>airport_bottlenecks.svg</code>, <code>carrier_delay_comparison.svg</code>, <code>delay_factor_distribution.svg</code>, <code>hourly_delay_trend.svg</code>, <code>worst_delay_routes.svg</code>.</p>
+
+<h2>7. ML component</h2>
+<p class="no">[NOT VERIFIED] <code>predict_delay.py</code> executes</p><p class="ev">Evidence: <code>sklearn/joblib</code> missing in active <code>.venv</code>.</p>
+<p class="no">[NOT VERIFIED] 74.67% accuracy reproducible</p><p class="ev">Evidence: Not reproduced (dependency/environment/artifact constraints).</p>
+<p class="part">[PARTIAL] Train/test split &amp; evaluation</p><p class="ev">Evidence: Not re-executed/audited in this run.</p>
+<p class="no">[NOT VERIFIED] NumPy fallback</p><p class="ev">Evidence: Not tested.</p>
+
+<h2>8. Documentation</h2>
+<p class="part">[PARTIAL] README commands match actual code</p><p class="ev">Evidence: Core entry points/files exist; full command matrix not executed.</p>
+<p class="part">[PARTIAL] Architecture diagram matches implementation</p><p class="ev">Evidence: Medallion + 5-task flow aligns; exhaustive diff not done.</p>
+<p class="part">[PARTIAL] <code>data_model.md</code> OBT vs logical star schema</p><p class="ev">Evidence: Model docs present and previously aligned; specific OBT phrasing not rechecked line-by-line now.</p>
+<p class="part">[PARTIAL] Dependencies/optional components documented</p><p class="ev">Evidence: Declared in requirements; active env install state varies.</p>
+
+<h2>9. Final clean-run test</h2>
+<p class="no">[NOT VERIFIED] Clean environment full demonstration</p><p class="ev">Evidence: Requires fresh setup, dependency install, raw 565MB data, full pipeline, tests, and dashboard without old artifacts. Not performed.</p>
+
+<h2>Recommended next actions</h2>
+<ul>
+<li>Run full raw→Gold pipeline with logs/checksums; rerun validation with GX-native installed.</li>
+<li>Install <code>requirements-dev.txt</code> in active env; reproduce ML accuracy and Streamlit smoke test.</li>
+<li>Run <code>RUN_SLOW_E2E=1</code> Airflow E2E and capture remote GitHub Actions evidence.</li>
+<li>Perform a true clean-clone/fixture demo and document reproducibility.</li>
+</ul>
+</body></html>

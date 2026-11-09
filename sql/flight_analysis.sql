@@ -90,7 +90,7 @@ SELECT
     ROUND(AVG(delay_minutes), 2) AS avg_delay_minutes,
     ROUND(100.0 * SUM(CASE WHEN delay_minutes <= 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS on_time_pct,
     ROUND(100.0 * SUM(CASE WHEN delay_minutes > 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS delay_pct,
-    SUM(CASE WHEN delay_severity = 'Moderate Delay (16-30 min)' THEN 1 ELSE 0 END) AS moderate_delays
+    SUM(CASE WHEN delay_severity = 'Moderate Delay (16-60 min)' THEN 1 ELSE 0 END) AS moderate_delays
 FROM silver
 GROUP BY departure_hour
 ORDER BY departure_hour ASC;
@@ -132,15 +132,18 @@ ORDER BY total_airport_movements DESC;
 -- ----------------------------------------------------------------------------
 -- 7. AIRCRAFT FLEET RELIABILITY & PERFORMANCE
 -- ----------------------------------------------------------------------------
+-- NOTE: BTS On-Time Performance does not publish aircraft type. Tail number
+-- (aircraft registration) is the finest fleet granularity available in this
+-- dataset, so the mart keys on tail_number instead of aircraft_type.
 SELECT
-    aircraft_type,
+    COALESCE(tail_number, 'Unknown') AS tail_number,
     COUNT(*) AS total_flights,
     ROUND(AVG(delay_minutes), 2) AS avg_delay_minutes,
     ROUND(AVG(distance), 1) AS avg_stage_length_miles,
     ROUND(100.0 * SUM(CASE WHEN delay_minutes <= 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS on_time_rate_pct,
     ROUND(100.0 * SUM(CASE WHEN cancelled THEN 1 ELSE 0 END) / COUNT(*), 2) AS cancellation_rate_pct
 FROM silver
-GROUP BY aircraft_type
+GROUP BY tail_number
 ORDER BY total_flights DESC;
 
 -- ----------------------------------------------------------------------------

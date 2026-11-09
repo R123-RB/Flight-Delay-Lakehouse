@@ -1,8 +1,12 @@
 import argparse
+import logging
 import os
 import time
 import duckdb
 import pandas as pd
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 def get_default_paths():
@@ -17,10 +21,10 @@ def build_gold(silver_path=None, gold_dir=None):
     silver_path = silver_path or default_silver
     gold_dir = gold_dir or default_gold
 
-    print("==================================================")
-    print("STEP 4: GOLD LAYER ANALYTICS & MARTS (DUCKDB)")
-    print("==================================================")
-    print(f"Reading Silver Parquet from: {silver_path}")
+    logger.info("=" * 50)
+    logger.info("STEP 4: GOLD LAYER ANALYTICS & MARTS (DUCKDB)")
+    logger.info("=" * 50)
+    logger.info(f"Reading Silver Parquet from: {silver_path}")
     start_time = time.time()
 
     if not os.path.exists(silver_path):
@@ -71,6 +75,7 @@ def build_gold(silver_path=None, gold_dir=None):
             FROM silver
             GROUP BY route, origin, destination
             ORDER BY avg_delay_minutes DESC, total_flights DESC
+            LIMIT 25
         """,
         "delay_factor_summary": """
             SELECT
@@ -123,39 +128,50 @@ def build_gold(silver_path=None, gold_dir=None):
                 ROUND(AVG(delay_minutes), 2) AS avg_delay_minutes,
                 ROUND(100.0 * SUM(CASE WHEN delay_minutes <= 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS on_time_pct,
                 ROUND(100.0 * SUM(CASE WHEN delay_minutes > 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS delay_pct,
-                SUM(CASE WHEN delay_severity = 'Moderate Delay (16-30 min)' THEN 1 ELSE 0 END) AS moderate_delay_count
+                SUM(CASE WHEN delay_severity = 'Moderate Delay (16-60 min)' THEN 1 ELSE 0 END) AS moderate_delay_count
             FROM silver
             GROUP BY departure_hour
             ORDER BY departure_hour ASC
         """,
         "aircraft_summary": """
             SELECT
-                aircraft_type,
+                COALESCE(tail_number, 'Unknown') AS tail_number,
                 COUNT(*) AS total_flights,
                 ROUND(AVG(delay_minutes), 2) AS avg_delay_minutes,
                 ROUND(AVG(distance), 1) AS avg_distance_miles,
                 SUM(CASE WHEN cancelled THEN 1 ELSE 0 END) AS cancelled_flights,
                 SUM(CASE WHEN diverted THEN 1 ELSE 0 END) AS diverted_flights
             FROM silver
-            GROUP BY aircraft_type
+            GROUP BY tail_number
             ORDER BY total_flights DESC
         """
     }
 
     results = {}
     for name, q in queries.items():
-        table_start = time.time()
-        df_gold = con.execute(q).fetchdf()
-        out_path = os.path.join(gold_dir, f"{name}.parquet")
-        df_gold.to_parquet(out_path, engine="pyarrow", index=False)
-        table_elapsed = time.time() - table_start
-        results[name] = len(df_gold)
-        print(f"Materialized Gold Mart: '{name}' -> {out_path} ({len(df_gold)} rows in {table_elapsed:.2f}s)")
+        try:
+            table_start = time.time()
+            df_gold = con.execute(q).fetchdf()
+            out_path = os.path.join(gold_dir, f"{name}.parquet")
+            df_gold.to_parquet(out_path, engine="pyarrow", index=False)
+            table_elapsed = time.time() - table_start
+            results[name] = len(df_gold)
+            logger.info(f"Materialized Gold Mart: '{name}' -> {out_path} ({len(df_gold)} rows in {table_elapsed:.2f}s)")
+        except Exception as e:
+            logger.error(f"Failed to materialize Gold Mart '{name}': {e}")
+            raise
 
+    # Materialize logical dimensions for star-schema physical alignment
+    try:
+        con.execute(f"COPY (SELECT DISTINCT airline AS airline_code FROM silver ORDER BY airline) TO '{os.path.join(gold_dir,"dim_airline.parquet")}' (FORMAT PARQUET)")
+        con.execute(f"COPY (SELECT DISTINCT airport_code FROM (SELECT origin AS airport_code FROM silver UNION ALL SELECT destination AS airport_code FROM silver) ORDER BY airport_code) TO '{os.path.join(gold_dir,"dim_airport.parquet")}' (FORMAT PARQUET)")
+        logger.info('Materialized dimension tables: dim_airline, dim_airport')
+    except Exception as e:
+        logger.warning(f'Failed to materialize dimension tables: {e}')
     con.close()
     total_elapsed = time.time() - start_time
-    print(f"\nGold Layer generation complete in {total_elapsed:.2f}s across {len(queries)} analytical marts.")
-    print("--------------------------------------------------\n")
+    logger.info(f"\nGold Layer generation complete in {total_elapsed:.2f}s across {len(queries)} analytical marts.")
+    logger.info("-" * 50 + "\n")
     return results
 
 

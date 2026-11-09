@@ -1,128 +1,132 @@
 # Flight Delay Lakehouse – Data Dictionary
 
-## 1. Raw / Bronze Layer (`flights.parquet`)
-Preserves the exact schema of the raw Kaggle dataset:
+## 1. Raw / Bronze Layer (`data/bronze/flights.parquet`)
+Source-preserving Parquet converted from the raw BTS/Kaggle CSV by `src/ingestion/ingest.py`.
 
-| Column Name | Raw Type | Parquet Type | Nullable | Description & Domain |
-| :--- | :--- | :--- | :---: | :--- |
-| `FlightID` | integer / string | `int64` | No | Unique identifier for each scheduled flight record |
-| `Airline` | string | `string` | No | Operating carrier: `American Airlines`, `Delta`, `Southwest`, `United` |
-| `FlightNumber` | integer | `int64` | No | Scheduled operational flight number (0001 - 9999) |
-| `Origin` | string | `string` | No | Departure airport IATA code (`ATL`, `DFW`, `JFK`, `LAX`, `ORD`) |
-| `Destination` | string | `string` | No | Arrival airport IATA code (`BOS`, `JFK`, `MIA`, `SEA`, `SFO`) |
-| `ScheduledDeparture` | string | `string` | No | Scheduled departure timestamp string (`YYYY-MM-DD HH:MM`) |
-| `ActualDeparture` | string | `string` | No | Actual departure timestamp string (`YYYY-MM-DD HH:MM`) |
-| `ScheduledArrival` | string | `string` | No | Scheduled arrival timestamp string (`YYYY-MM-DD HH:MM`) |
-| `ActualArrival` | string | `string` | No | Actual arrival timestamp string (`YYYY-MM-DD HH:MM`) |
-| `DelayMinutes` | integer | `int64` | No | Net flight delay duration in minutes (Range: -10 to +30) |
-| `DelayReason` | string | `string` | Yes | Cause of delay (`Weather`, `Air Traffic Control`, `Maintenance`). Missing (null) when flight is on-time (`DelayMinutes <= 0`) |
-| `Cancelled` | boolean | `bool` | No | Whether the flight was cancelled (`True` or `False`) |
-| `Diverted` | boolean | `bool` | No | Whether the flight was diverted to an alternate airport (`True` or `False`) |
-| `AircraftType` | string | `string` | No | Equipment model: `Airbus A320`, `Boeing 737`, `Boeing 777` |
-| `TailNumber` | string | `string` | No | Aircraft registration number (e.g. `N71066`) |
-| `Distance` | integer | `int64` | No | Flight distance in statute miles (Range: 131 to 2,980) |
+| Column Name | Parquet Type (typical) | Nullable | Description & Domain |
+| :--- | :--- | :---: | :--- |
+| `YEAR` | `int64` | No | Year of scheduled departure |
+| `MONTH` | `int64` | No | Month of scheduled departure (1-12) |
+| `DAY` | `int64` | No | Day of scheduled departure (1-31) |
+| `DAY_OF_WEEK` | `int64` | No | Day of week (1=Monday … 7=Sunday) |
+| `AIRLINE` | `string` | No | Operating carrier IATA code (e.g., `AA`, `DL`, `UA`, `WN`, `B6`, `NK`, `AS`, `HA`, `F9`, `EV`, `MQ`, `OO`, `US`, `VX`) |
+| `FLIGHT_NUMBER` | `string` (ingested as identifier) | No | Scheduled flight number |
+| `TAIL_NUMBER` | `string` | Yes | Aircraft registration (null in some records) |
+| `ORIGIN_AIRPORT` | `string` | No | Departure airport IATA code |
+| `DESTINATION_AIRPORT` | `string` | No | Arrival airport IATA code |
+| `SCHEDULED_DEPARTURE` | `int64` / HHMM value | No | Scheduled departure time (HHMM) |
+| `DEPARTURE_TIME` | `float64` / HHMM value | Yes | Actual departure time (HHMM); null for cancelled |
+| `DEPARTURE_DELAY` | `float64` | Yes | Departure delay in minutes; null for cancelled |
+| `TAXI_OUT` | `float64` | Yes | Taxi-out time in minutes |
+| `WHEELS_OFF` | `float64` / HHMM value | Yes | Wheels-off time (HHMM) |
+| `SCHEDULED_TIME` | `float64` | Yes | Scheduled elapsed time in minutes |
+| `ELAPSED_TIME` | `float64` | Yes | Actual elapsed time in minutes |
+| `AIR_TIME` | `float64` | Yes | Actual airborne time in minutes |
+| `DISTANCE` | `int64` | No | Route distance in statute miles |
+| `WHEELS_ON` | `float64` / HHMM value | Yes | Wheels-on time (HHMM) |
+| `TAXI_IN` | `float64` | Yes | Taxi-in time in minutes |
+| `SCHEDULED_ARRIVAL` | `int64` / HHMM value | No | Scheduled arrival time (HHMM) |
+| `ARRIVAL_TIME` | `float64` / HHMM value | Yes | Actual arrival time (HHMM) |
+| `ARRIVAL_DELAY` | `float64` | Yes | Arrival delay in minutes |
+| `DIVERTED` | `int64` | No | Diversion flag (0/1) |
+| `CANCELLED` | `int64` | No | Cancellation flag (0/1) |
+| `CANCELLATION_REASON` | `string` | Yes | `A`=carrier, `B`=weather, `C`=NAS, `D`=security/late-aircraft context varies by BTS encoding; null when not cancelled |
+| `AIR_SYSTEM_DELAY` | `float64` | Yes | Air system / NAS delay minutes (cause breakdown; often null) |
+| `SECURITY_DELAY` | `float64` | Yes | Security delay minutes (often null) |
+| `AIRLINE_DELAY` | `float64` | Yes | Carrier delay minutes (often null) |
+| `LATE_AIRCRAFT_DELAY` | `float64` | Yes | Late aircraft delay minutes (often null) |
+| `WEATHER_DELAY` | `float64` | Yes | Weather delay minutes (often null) |
 
 ---
 
-## 2. Silver Layer (`flights_cleaned.parquet`)
-Standardized, typed, and enriched with derived analytics features:
+## 2. Silver Layer (`data/silver/flights_cleaned.parquet`)
+Standardized, typed, and enriched by `src/transformations/clean_flights.py`. This is the physical fact table for analytics.
 
 | Column Name | Data Type | Nullable | Description & Derivation Logic |
 | :--- | :--- | :---: | :--- |
-| `flight_id` | `int64` | No | Standardized primary key |
-| `airline` | `string` | No | Standardized operating carrier name |
-| `flight_number` | `int64` | No | Flight identification number |
-| `origin` | `string` | No | Departure airport code |
-| `destination` | `string` | No | Destination airport code |
-| `scheduled_departure` | `datetime64[ns]` | No | Standardized ISO datetime of scheduled departure |
-| `actual_departure` | `datetime64[ns]` | No | Standardized ISO datetime of actual departure |
-| `scheduled_arrival` | `datetime64[ns]` | No | Standardized ISO datetime of scheduled arrival |
-| `actual_arrival` | `datetime64[ns]` | No | Standardized ISO datetime of actual arrival |
-| `delay_minutes` | `int64` | No | Delay duration in minutes |
-| `delay_reason` | `string` | Yes | Recorded delay reason; null for on-time flights |
-| `cancelled` | `bool` | No | Cancellation flag |
-| `diverted` | `bool` | No | Diversion flag |
-| `aircraft_type` | `string` | No | Aircraft model |
-| `tail_number` | `string` | No | Aircraft tail registration |
-| `distance` | `int64` | No | Route distance in miles |
-| `route` | `string` | No | Derived corridor format: `origin-destination` (e.g. `JFK-MIA`) |
-| `departure_date` | `string` | No | Derived scheduled departure date (`YYYY-MM-DD`) |
-| `departure_hour` | `int32` | No | Hour of scheduled departure (`0` to `23`) |
-| `departure_day_of_week` | `string` | No | Day name of scheduled departure (e.g. `Sunday`) |
-| `actual_departure_delay_minutes` | `float64` | No | `(actual_departure - scheduled_departure)` in minutes |
-| `actual_arrival_delay_minutes` | `float64` | No | `(actual_arrival - scheduled_arrival)` in minutes |
-| `actual_flight_duration_minutes` | `float64` | No | `(actual_arrival - actual_departure)` in minutes |
-| `flight_status` | `string` | No | Operational status: `operated`, `cancelled`, `diverted`, `cancelled_and_diverted` |
-| `largest_delay_factor` | `string` | No | Derived primary delay cause: `None (On-Time / Early)`, `Flight Cancelled`, `Flight Diverted`, `Weather Delay`, `Carrier Equipment / Maintenance`, `Air Traffic Control / NAS Delay` |
-| `delay_severity` | `string` | No | Severity category: `On-Time`, `Minor Delay (1-15 min)`, `Moderate Delay (16-30 min)`, `Severe Delay (>30 min)` |
-| `is_weather_delay` | `int8` | No | Flag (1/0) indicating weather-attributed delay |
-| `is_carrier_delay` | `int8` | No | Flag (1/0) indicating maintenance/carrier delay |
-| `is_nas_security_delay` | `int8` | No | Flag (1/0) indicating air traffic control delay |
+| `flight_id` | `int64` | No | Surrogate primary key (1..N) generated in Silver. |
+| `airline` | `string` | No | Operating carrier IATA code (from `AIRLINE`). |
+| `flight_number` | `string` | No | Flight identifier (from `FLIGHT_NUMBER`). |
+| `tail_number` | `string` | Yes | Aircraft registration (from `TAIL_NUMBER`). |
+| `origin` | `string` | No | Departure airport code (from `ORIGIN_AIRPORT`). |
+| `destination` | `string` | No | Arrival airport code (from `DESTINATION_AIRPORT`). |
+| `year` | `int64` | No | Scheduled departure year. |
+| `month` | `int64` | No | Scheduled departure month. |
+| `day` | `int64` | No | Scheduled departure day. |
+| `day_of_week` | `int64` | No | Scheduled day of week (1=Monday … 7=Sunday). |
+| `scheduled_departure` | `datetime64[ns]` | No | Parsed scheduled departure timestamp (YEAR/MONTH/DAY + scheduled HHMM). |
+| `actual_departure` | `datetime64[ns]` | Yes | Parsed actual departure timestamp; null when unavailable/cancelled. |
+| `scheduled_arrival` | `datetime64[ns]` | No | Parsed scheduled arrival timestamp. |
+| `actual_arrival` | `datetime64[ns]` | Yes | Parsed actual arrival timestamp; null when unavailable/cancelled. |
+| `departure_delay_minutes` | `float64` | Yes | BTS departure delay minutes. |
+| `arrival_delay_minutes` | `float64` | Yes | BTS arrival delay minutes. |
+| `delay_minutes` | `float64` | Yes | Alias of `departure_delay_minutes` for downstream compatibility. |
+| `actual_departure_delay_minutes` | `float64` | Yes | Alias of `departure_delay_minutes`. |
+| `actual_arrival_delay_minutes` | `float64` | Yes | Alias of `arrival_delay_minutes`. |
+| `actual_flight_duration_minutes` | `float64` | Yes | Alias of `air_time_minutes`. |
+| `taxi_out_minutes` | `float64` | Yes | Taxi-out minutes. |
+| `taxi_in_minutes` | `float64` | Yes | Taxi-in minutes. |
+| `scheduled_time_minutes` | `float64` | Yes | Scheduled elapsed minutes. |
+| `elapsed_time_minutes` | `float64` | Yes | Actual elapsed minutes. |
+| `air_time_minutes` | `float64` | Yes | Airborne minutes. |
+| `distance` | `int64` | No | Route distance in statute miles. |
+| `cancelled` | `int64` | No | Cancellation flag (0/1). |
+| `diverted` | `int64` | No | Diversion flag (0/1). |
+| `cancellation_reason` | `string` | Yes | BTS cancellation reason code; null when not cancelled. |
+| `air_system_delay_minutes` | `float64` | Yes | NAS/air-system delay minutes. |
+| `security_delay_minutes` | `float64` | Yes | Security delay minutes. |
+| `airline_delay_minutes` | `float64` | Yes | Carrier delay minutes. |
+| `late_aircraft_delay_minutes` | `float64` | Yes | Late aircraft delay minutes. |
+| `weather_delay_minutes` | `float64` | Yes | Weather delay minutes. |
+| `route` | `string` | No | Derived corridor key: `origin-destination`. |
+| `departure_date` | `string` | No | Derived scheduled departure date (`YYYY-MM-DD`). |
+| `departure_hour` | `int32` | No | Scheduled departure hour (0–23). |
+| `departure_day_of_week` | `string` | No | Day name (e.g., `Monday`). |
+| `flight_status` | `string` | No | `operated`, `cancelled`, `diverted`, `cancelled_and_diverted`. |
+| `largest_delay_factor` | `string` | No | Primary disruption factor: `None (On-Time / Early)`, `Flight Cancelled`, `Flight Diverted`, `Weather Delay`, `Airline / Carrier Delay`, `Late Aircraft Delay`, `Air System / NAS Delay`, `Security Delay`, `Unspecified / Not Reported`. |
+| `delay_severity` | `string` | No | `On-Time`, `Minor Delay (1-15 min)`, `Moderate Delay (16-60 min)`, `Severe Delay (>60 min)`, `Not Applicable`. |
+| `is_weather_delay` | `int8` | No | 1 if weather delay minutes > 0 else 0. |
+| `is_carrier_delay` | `int8` | No | 1 if airline or late-aircraft delay minutes > 0 else 0. |
+| `is_nas_security_delay` | `int8` | No | 1 if air-system or security delay minutes > 0 else 0. |
+
+> **Alignment note:** Raw HHMM helper columns are converted to datetime fields and not retained in the final Silver schema.
 
 ---
 
 ## 3. Gold Layer Marts (`data/gold/*.parquet`)
+Canonical marts produced by `src/analytics/build_gold.py`. (Other `data/gold/*.parquet` files may exist from prior runs/experiments and are not canonical outputs of the current build script.)
 
-### `airline_summary.parquet`
-Aggregates performance by carrier:
-- `airline`: Carrier name
-- `total_flights`: Total volume of scheduled flights
-- `avg_delay_minutes`: Average recorded delay
-- `median_delay_minutes`: Median delay
-- `on_time_flights` & `on_time_pct`: Flight volume and percentage with delay <= 0
-- `delayed_flights` & `delay_pct`: Flight volume and percentage with delay > 0
-- `cancelled_flights` & `cancelled_pct`: Cancellations count and rate
-- `diverted_flights` & `diverted_pct`: Diversions count and rate
-- `avg_departure_delay`: Average difference between actual and scheduled departure
-- `avg_arrival_delay`: Average difference between actual and scheduled arrival
-- `weather_delays`, `maintenance_delays`, `atc_security_delays`: Count of delay causes
+### `airline_summary.parquet` (1 row per `airline`)
+- `airline`, `total_flights`, `avg_delay_minutes`, `median_delay_minutes`
+- `on_time_flights`, `on_time_pct`, `delayed_flights`, `delay_pct`
+- `cancelled_flights`, `cancelled_pct`, `diverted_flights`, `diverted_pct`
+- `avg_departure_delay`, `avg_arrival_delay`
+- `weather_delays`, `maintenance_delays`, `atc_security_delays`
 
-### `route_summary.parquet`
-Aggregates performance across the 25 origin-destination corridors:
-- `route`: Synthetic corridor key (e.g. `JFK-MIA`)
-- `origin`: Departure airport
-- `destination`: Arrival airport
-- `total_flights`: Corridor volume
-- `avg_delay_minutes`: Average delay
-- `max_delay_minutes`: Maximum recorded delay
-- `delayed_flights`: Number of delayed flights
-- `delay_rate_pct`: Percentage of delayed flights
-- `avg_distance_miles`: Average flight distance
-- `avg_flight_duration_min`: Average duration
+### `route_summary.parquet` (top corridor summary; 1 row per `route`)
+- `route`, `origin`, `destination`, `total_flights`
+- `avg_delay_minutes`, `max_delay_minutes`, `delayed_flights`, `delay_rate_pct`
+- `avg_distance_miles`, `avg_flight_duration_min`
 
-### `delay_factor_summary.parquet`
-Overall distribution of `largest_delay_factor`:
-- `largest_delay_factor`: Factor category
-- `flight_count`: Number of flights
-- `pct_of_total`: Percentage share
-- `avg_delay_minutes`: Mean delay for this factor
-- `min_delay_minutes` & `max_delay_minutes`: Range
+### `delay_factor_summary.parquet` (1 row per `largest_delay_factor`)
+- `largest_delay_factor`, `flight_count`, `pct_of_total`
+- `avg_delay_minutes`, `min_delay_minutes`, `max_delay_minutes`
 
-### `airport_bottlenecks.parquet`
-Hub analysis comparing departure and arrival impacts across the 9 airports:
-- `airport_code`: IATA airport code
-- `departing_flights`: Number of departing flights
-- `avg_origin_delay`: Mean origin departure delay
-- `origin_delay_rate_pct`: Percentage of departed flights delayed
-- `arriving_flights`: Number of arriving flights
-- `avg_destination_delay`: Mean destination arrival delay
-- `dest_delay_rate_pct`: Percentage of arrived flights delayed
-- `total_operations`: Sum of departures and arrivals
+### `airport_bottlenecks.parquet` (1 row per `airport_code`)
+- `airport_code`, `departing_flights`, `avg_origin_delay`, `origin_delay_rate_pct`
+- `arriving_flights`, `avg_destination_delay`, `dest_delay_rate_pct`, `total_operations`
 
-### `temporal_trends.parquet`
-Diurnal profile across the 24 departure hours:
-- `departure_hour`: Scheduled departure hour (0 to 23)
-- `total_flights`: Flights scheduled in this window
-- `avg_delay_minutes`: Mean delay
-- `on_time_pct`: On-time percentage
-- `delay_pct`: Delay percentage
-- `moderate_delay_count`: Flights with delay between 16 and 30 minutes
+### `temporal_trends.parquet` (1 row per `departure_hour`)
+- `departure_hour`, `total_flights`, `avg_delay_minutes`, `on_time_pct`, `delay_pct`, `moderate_delay_count`
 
-### `aircraft_summary.parquet`
-Fleet performance by equipment model:
-- `aircraft_type`: `Airbus A320`, `Boeing 737`, `Boeing 777`
-- `total_flights`: Volume flown
-- `avg_delay_minutes`: Mean delay
-- `avg_distance_miles`: Average flight distance
-- `cancelled_flights` & `diverted_flights`: Disruption volume
+### `aircraft_summary.parquet` (1 row per `tail_number`)
+- `tail_number`, `total_flights`, `avg_delay_minutes`, `avg_distance_miles`, `cancelled_flights`, `diverted_flights`
 
+> **Note:** BTS does not publish aircraft type; `aircraft_summary` uses registration (`tail_number`) as the fleet proxy.
+
+---
+
+## 4. Keys & Relationships (Physical Implementation)
+- **Silver PK:** `flight_id` (validated unique/non-null).
+- **Logical FKs in Silver:** `airline`, `origin`, `destination`, `departure_date`, `tail_number` (documented/modelled; not DB-enforced in Parquet).
+- **Gold lineage:** all canonical marts are aggregated from `data/silver/flights_cleaned.parquet` via DuckDB.

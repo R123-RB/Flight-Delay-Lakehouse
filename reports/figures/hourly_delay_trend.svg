@@ -11,38 +11,38 @@
 <text x="50" y="184" font-size="11" fill="#94a3b8">10m</text>
 <line x1="75" y1="120" x2="700" y2="120" stroke="#f1f5f9" stroke-width="1"/>
 <text x="50" y="124" font-size="11" fill="#94a3b8">15m</text>
-<polyline fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" points="80,179 106,179 132,179 158,179 184,178 210,180 236,180 262,179 288,179 314,180 340,179 366,180 393,180 419,180 445,180 471,180 497,179 523,180 549,180 575,180 601,180 627,180 653,180 680,180"/>
-<circle cx="80" cy="179" r="4" fill="#0284c7"/>
+<polyline fill="none" stroke="#0ea5e9" stroke-width="3" stroke-linecap="round" points="80,213 106,202 132,212 158,192 184,175 210,277 236,274 262,261 288,243 314,231 340,217 366,206 393,192 419,182 445,165 471,156 497,144 523,133 549,120 575,119 601,116 627,135 653,158 680,185"/>
+<circle cx="80" cy="213" r="4" fill="#0284c7"/>
 <text x="74" y="320" font-size="11" fill="#64748b">00h</text>
-<circle cx="106" cy="179" r="4" fill="#0284c7"/>
-<circle cx="132" cy="179" r="4" fill="#0284c7"/>
-<circle cx="158" cy="179" r="4" fill="#0284c7"/>
+<circle cx="106" cy="202" r="4" fill="#0284c7"/>
+<circle cx="132" cy="212" r="4" fill="#0284c7"/>
+<circle cx="158" cy="192" r="4" fill="#0284c7"/>
 <text x="152" y="320" font-size="11" fill="#64748b">03h</text>
-<circle cx="184" cy="178" r="4" fill="#0284c7"/>
-<circle cx="210" cy="180" r="4" fill="#0284c7"/>
-<circle cx="236" cy="180" r="4" fill="#0284c7"/>
+<circle cx="184" cy="175" r="4" fill="#0284c7"/>
+<circle cx="210" cy="277" r="4" fill="#0284c7"/>
+<circle cx="236" cy="274" r="4" fill="#0284c7"/>
 <text x="230" y="320" font-size="11" fill="#64748b">06h</text>
-<circle cx="262" cy="179" r="4" fill="#0284c7"/>
-<circle cx="288" cy="179" r="4" fill="#0284c7"/>
-<circle cx="314" cy="180" r="4" fill="#0284c7"/>
+<circle cx="262" cy="261" r="4" fill="#0284c7"/>
+<circle cx="288" cy="243" r="4" fill="#0284c7"/>
+<circle cx="314" cy="231" r="4" fill="#0284c7"/>
 <text x="308" y="320" font-size="11" fill="#64748b">09h</text>
-<circle cx="340" cy="179" r="4" fill="#0284c7"/>
-<circle cx="366" cy="180" r="4" fill="#0284c7"/>
-<circle cx="393" cy="180" r="4" fill="#0284c7"/>
+<circle cx="340" cy="217" r="4" fill="#0284c7"/>
+<circle cx="366" cy="206" r="4" fill="#0284c7"/>
+<circle cx="393" cy="192" r="4" fill="#0284c7"/>
 <text x="387" y="320" font-size="11" fill="#64748b">12h</text>
-<circle cx="419" cy="180" r="4" fill="#0284c7"/>
-<circle cx="445" cy="180" r="4" fill="#0284c7"/>
-<circle cx="471" cy="180" r="4" fill="#0284c7"/>
+<circle cx="419" cy="182" r="4" fill="#0284c7"/>
+<circle cx="445" cy="165" r="4" fill="#0284c7"/>
+<circle cx="471" cy="156" r="4" fill="#0284c7"/>
 <text x="465" y="320" font-size="11" fill="#64748b">15h</text>
-<circle cx="497" cy="179" r="4" fill="#0284c7"/>
-<circle cx="523" cy="180" r="4" fill="#0284c7"/>
-<circle cx="549" cy="180" r="4" fill="#0284c7"/>
+<circle cx="497" cy="144" r="4" fill="#0284c7"/>
+<circle cx="523" cy="133" r="4" fill="#0284c7"/>
+<circle cx="549" cy="120" r="4" fill="#0284c7"/>
 <text x="543" y="320" font-size="11" fill="#64748b">18h</text>
-<circle cx="575" cy="180" r="4" fill="#0284c7"/>
-<circle cx="601" cy="180" r="4" fill="#0284c7"/>
-<circle cx="627" cy="180" r="4" fill="#0284c7"/>
+<circle cx="575" cy="119" r="4" fill="#0284c7"/>
+<circle cx="601" cy="116" r="4" fill="#0284c7"/>
+<circle cx="627" cy="135" r="4" fill="#0284c7"/>
 <text x="621" y="320" font-size="11" fill="#64748b">21h</text>
-<circle cx="653" cy="180" r="4" fill="#0284c7"/>
-<circle cx="680" cy="180" r="4" fill="#0284c7"/>
+<circle cx="653" cy="158" r="4" fill="#0284c7"/>
+<circle cx="680" cy="185" r="4" fill="#0284c7"/>
 <text x="340" y="348" font-size="12" font-weight="600" fill="#475569">Scheduled Departure Hour (UTC)</text>
 </svg>

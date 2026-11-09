@@ -1,7 +1,17 @@
 import argparse
+import html
+import logging
 import os
 import duckdb
 import pandas as pd
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+def _svg_text(value) -> str:
+    """Escape text for safe embedding in SVG/XML."""
+    return html.escape(str(value), quote=True)
 
 
 def get_default_paths():
@@ -16,44 +26,49 @@ def create_carrier_chart(gold_dir: str, figures_dir: str):
     df = df.sort_values("avg_delay_minutes", ascending=True)
 
     width = 750
-    height = 420
+    bar_h = 32
+    row_h = 60
+    top = 120
+    rows = max(len(df), 1)
+    footer_y = top + rows * row_h + 24
+    height = footer_y + 60
     svg = [
         f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">',
-        '<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Carrier Performance: Average Delay vs On-Time %</text>',
-        '<text x="40" y="70" font-size="13" fill="#64748b">Benchmark of 1.74M scheduled flights across major US carriers</text>',
+        f'<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">{_svg_text("Carrier Performance: Average Delay vs On-Time %")}</text>',
+        f'<text x="40" y="70" font-size="13" fill="#64748b">{_svg_text("Benchmark of 5.82M scheduled flights across major US carriers")}</text>',
     ]
 
     # Draw bars
-    bar_y = 120
+    bar_y = top
     colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"]
     for i, row in df.iterrows():
         airline = row["airline"]
         avg_delay = row["avg_delay_minutes"]
         on_time = row["on_time_pct"]
-        bar_len = int(avg_delay * 28)
+        bar_len = max(int(float(avg_delay) * 28), 0)
         color = colors[i % len(colors)]
 
-        svg.append(f'<text x="40" y="{bar_y + 22}" font-size="14" font-weight="600" fill="#334155">{airline}</text>')
+        svg.append(f'<text x="40" y="{bar_y + 22}" font-size="14" font-weight="600" fill="#334155">{_svg_text(airline)}</text>')
         # Delay bar
-        svg.append(f'<rect x="200" y="{bar_y}" width="{bar_len}" height="32" rx="4" fill="{color}" fill-opacity="0.9"/>')
-        svg.append(f'<text x="{210 + bar_len}" y="{bar_y + 21}" font-size="13" font-weight="bold" fill="{color}">{avg_delay} min delay</text>')
-        svg.append(f'<text x="560" y="{bar_y + 21}" font-size="13" fill="#64748b">On-Time: {on_time}%</text>')
-        bar_y += 60
+        svg.append(f'<rect x="200" y="{bar_y}" width="{bar_len}" height="{bar_h}" rx="4" fill="{color}" fill-opacity="0.9"/>')
+        svg.append(f'<text x="{210 + bar_len}" y="{bar_y + 21}" font-size="13" font-weight="bold" fill="{color}">{_svg_text(f"{avg_delay} min delay")}</text>')
+        svg.append(f'<text x="560" y="{bar_y + 21}" font-size="13" fill="#64748b">{_svg_text(f"On-Time: {on_time}%")}</text>')
+        bar_y += row_h
 
     # Legend / footer
-    svg.append('<line x1="40" y1="370" x2="710" y2="370" stroke="#e2e8f0" stroke-width="1"/>')
-    svg.append('<text x="40" y="395" font-size="12" fill="#94a3b8">Source: Kaggle Aviation Delay Lakehouse (Silver/Gold Mart)</text>')
+    svg.append(f'<line x1="40" y1="{footer_y - 20}" x2="710" y2="{footer_y - 20}" stroke="#e2e8f0" stroke-width="1"/>')
+    svg.append(f'<text x="40" y="{footer_y}" font-size="12" fill="#94a3b8">{_svg_text("Source: Kaggle Aviation Delay Lakehouse (Silver/Gold Mart)")}</text>')
     svg.append('</svg>')
 
     out_file = os.path.join(figures_dir, "carrier_delay_comparison.svg")
     with open(out_file, "w") as f:
         f.write("\n".join(svg))
-    print(f"Generated: {out_file}")
+    logger.info(f"Generated: {out_file}")
 
 
 def create_routes_chart(gold_dir: str, figures_dir: str):
     df = pd.read_parquet(os.path.join(gold_dir, "route_summary.parquet")).head(8)
-    
+
     width = 750
     height = 460
     svg = [
@@ -82,12 +97,12 @@ def create_routes_chart(gold_dir: str, figures_dir: str):
     out_file = os.path.join(figures_dir, "worst_delay_routes.svg")
     with open(out_file, "w") as f:
         f.write("\n".join(svg))
-    print(f"Generated: {out_file}")
+    logger.info(f"Generated: {out_file}")
 
 
 def create_hourly_chart(gold_dir: str, figures_dir: str):
     df = pd.read_parquet(os.path.join(gold_dir, "temporal_trends.parquet"))
-    
+
     width = 750
     height = 380
     svg = [
@@ -131,18 +146,22 @@ def create_hourly_chart(gold_dir: str, figures_dir: str):
     out_file = os.path.join(figures_dir, "hourly_delay_trend.svg")
     with open(out_file, "w") as f:
         f.write("\n".join(svg))
-    print(f"Generated: {out_file}")
+    logger.info(f"Generated: {out_file}")
 
 
 def create_delay_factors_chart(gold_dir: str, figures_dir: str):
     df = pd.read_parquet(os.path.join(gold_dir, "delay_factor_summary.parquet"))
-    
+
     width = 750
-    height = 420
+    row_h = 42
+    top = 110
+    rows = max(len(df), 1)
+    footer_y = top + rows * row_h + 24
+    height = footer_y + 60
     svg = [
         f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">',
-        '<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Largest Delay Factor & Operational Outcome Breakdown</text>',
-        '<text x="40" y="70" font-size="13" fill="#64748b">Distribution of flight causes across 1,747,627 aviation records</text>',
+        f'<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">{_svg_text("Largest Delay Factor & Operational Outcome Breakdown")}</text>',
+        f'<text x="40" y="70" font-size="13" fill="#64748b">{_svg_text("Distribution of flight causes across 5.8M aviation records")}</text>',
     ]
 
     bar_y = 110
@@ -150,9 +169,12 @@ def create_delay_factors_chart(gold_dir: str, figures_dir: str):
         "Flight Cancelled": "#ef4444",
         "Flight Diverted": "#f97316",
         "None (On-Time / Early)": "#10b981",
-        "Air Traffic Control / NAS Delay": "#3b82f6",
-        "Carrier Equipment / Maintenance": "#8b5cf6",
+        "Air System / NAS Delay": "#3b82f6",
+        "Security Delay": "#8b5cf6",
+        "Airline / Carrier Delay": "#a855f7",
+        "Late Aircraft Delay": "#d946ef",
         "Weather Delay": "#06b6d4",
+        "Unspecified / Not Reported": "#94a3b8",
     }
 
     for i, row in df.iterrows():
@@ -160,33 +182,38 @@ def create_delay_factors_chart(gold_dir: str, figures_dir: str):
         count = row["flight_count"]
         pct = row["pct_of_total"]
         color = colors.get(factor, "#64748b")
-        bar_w = int((pct / 55.0) * 350)
+        bar_w = max(int((float(pct) / 55.0) * 350), 1)
 
-        svg.append(f'<text x="40" y="{bar_y + 19}" font-size="13" font-weight="600" fill="#334155">{factor}</text>')
+        svg.append(f'<text x="40" y="{bar_y + 19}" font-size="13" font-weight="600" fill="#334155">{_svg_text(factor)}</text>')
         svg.append(f'<rect x="280" y="{bar_y}" width="{bar_w}" height="26" rx="4" fill="{color}" fill-opacity="0.9"/>')
-        svg.append(f'<text x="{290 + bar_w}" y="{bar_y + 18}" font-size="12" font-weight="bold" fill="{color}">{pct:.1f}%</text>')
-        svg.append(f'<text x="590" y="{bar_y + 18}" font-size="12" fill="#64748b">{count:,} flights</text>')
-        bar_y += 42
+        svg.append(f'<text x="{290 + bar_w}" y="{bar_y + 18}" font-size="12" font-weight="bold" fill="{color}">{_svg_text(f"{pct:.1f}%")}</text>')
+        svg.append(f'<text x="590" y="{bar_y + 18}" font-size="12" fill="#64748b">{_svg_text(f"{int(count):,} flights")}</text>')
+        bar_y += row_h
 
-    svg.append('<line x1="40" y1="380" x2="710" y2="380" stroke="#e2e8f0" stroke-width="1"/>')
-    svg.append('<text x="40" y="400" font-size="12" fill="#94a3b8">Source: Derived largest_delay_factor feature (Silver/Gold Parquet)</text>')
+    svg.append(f'<line x1="40" y1="{footer_y - 20}" x2="710" y2="{footer_y - 20}" stroke="#e2e8f0" stroke-width="1"/>')
+    svg.append(f'<text x="40" y="{footer_y}" font-size="12" fill="#94a3b8">{_svg_text("Source: Derived largest_delay_factor feature (Silver/Gold Parquet)")}</text>')
     svg.append('</svg>')
 
     out_file = os.path.join(figures_dir, "delay_factor_distribution.svg")
     with open(out_file, "w") as f:
         f.write("\n".join(svg))
-    print(f"Generated: {out_file}")
+    logger.info(f"Generated: {out_file}")
 
 
 def create_airport_bottlenecks_chart(gold_dir: str, figures_dir: str):
     df = pd.read_parquet(os.path.join(gold_dir, "airport_bottlenecks.parquet"))
-    
+    df = df.sort_values("total_operations", ascending=False).head(15)
+
     width = 750
-    height = 430
+    row_h = 32
+    top = 110
+    rows = max(len(df), 1)
+    footer_y = top + rows * row_h + 30
+    height = footer_y + 50
     svg = [
         f'<svg width="{width}" height="{height}" xmlns="http://www.w3.org/2000/svg" style="background:#ffffff; font-family:sans-serif; border:1px solid #e2e8f0; border-radius:8px;">',
-        '<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">Airport Hub Delay & Congestion Analysis</text>',
-        '<text x="40" y="70" font-size="13" fill="#64748b">Origin vs Destination arrival delay performance across major airport hubs</text>',
+        f'<text x="40" y="45" font-size="20" font-weight="bold" fill="#1e293b">{_svg_text("Airport Hub Delay & Congestion Analysis")}</text>',
+        f'<text x="40" y="70" font-size="13" fill="#64748b">{_svg_text("Origin vs Destination arrival delay performance across major airport hubs")}</text>',
     ]
 
     bar_y = 110
@@ -196,29 +223,29 @@ def create_airport_bottlenecks_chart(gold_dir: str, figures_dir: str):
         dep_delay = row["avg_origin_delay"]
         arr_delay = row["avg_destination_delay"]
 
-        svg.append(f'<text x="40" y="{bar_y + 18}" font-size="13" font-weight="bold" fill="#1e293b">{code}</text>')
-        svg.append(f'<text x="90" y="{bar_y + 18}" font-size="12" fill="#64748b">{ops:,} ops</text>')
-        
+        svg.append(f'<text x="40" y="{bar_y + 18}" font-size="13" font-weight="bold" fill="#1e293b">{_svg_text(code)}</text>')
+        svg.append(f'<text x="90" y="{bar_y + 18}" font-size="12" fill="#64748b">{_svg_text(f"{int(ops):,} ops")}</text>')
+
         # Dep delay bar (blue)
-        dep_w = int(dep_delay * 18)
+        dep_w = max(int(float(dep_delay) * 18), 0)
         svg.append(f'<rect x="230" y="{bar_y}" width="{dep_w}" height="14" rx="3" fill="#3b82f6"/>')
-        svg.append(f'<text x="{240 + dep_w}" y="{bar_y + 11}" font-size="10" fill="#1d4ed8">Origin: {dep_delay}m</text>')
+        svg.append(f'<text x="{240 + dep_w}" y="{bar_y + 11}" font-size="10" fill="#1d4ed8">{_svg_text(f"Origin: {dep_delay}m")}</text>')
 
         # Arr delay bar (orange)
-        arr_w = int(arr_delay * 18)
+        arr_w = max(int(float(arr_delay) * 18), 0)
         svg.append(f'<rect x="440" y="{bar_y}" width="{arr_w}" height="14" rx="3" fill="#f97316"/>')
-        svg.append(f'<text x="{450 + arr_w}" y="{bar_y + 11}" font-size="10" fill="#c2410c">Dest: {arr_delay}m</text>')
+        svg.append(f'<text x="{450 + arr_w}" y="{bar_y + 11}" font-size="10" fill="#c2410c">{_svg_text(f"Dest: {arr_delay}m")}</text>')
 
-        bar_y += 32
+        bar_y += row_h
 
-    svg.append('<line x1="40" y1="400" x2="710" y2="400" stroke="#e2e8f0" stroke-width="1"/>')
-    svg.append('<text x="40" y="420" font-size="12" fill="#94a3b8">Source: DuckDB Airport Bottlenecks Mart (data/gold/airport_bottlenecks.parquet)</text>')
+    svg.append(f'<line x1="40" y1="{footer_y - 20}" x2="710" y2="{footer_y - 20}" stroke="#e2e8f0" stroke-width="1"/>')
+    svg.append(f'<text x="40" y="{footer_y}" font-size="12" fill="#94a3b8">{_svg_text("Source: DuckDB Airport Bottlenecks Mart (data/gold/airport_bottlenecks.parquet)")}</text>')
     svg.append('</svg>')
 
     out_file = os.path.join(figures_dir, "airport_bottlenecks.svg")
     with open(out_file, "w") as f:
         f.write("\n".join(svg))
-    print(f"Generated: {out_file}")
+    logger.info(f"Generated: {out_file}")
 
 
 def generate_all_visualizations(gold_dir=None, figures_dir=None):
@@ -226,11 +253,11 @@ def generate_all_visualizations(gold_dir=None, figures_dir=None):
     gold_dir = gold_dir or default_gold
     figures_dir = figures_dir or default_figures
 
-    print("==================================================")
-    print("STEP 5: VISUALIZATION GENERATION")
-    print("==================================================")
-    print(f"Reading Gold marts from: {gold_dir}")
-    print(f"Writing figures to: {figures_dir}")
+    logger.info("=" * 50)
+    logger.info("STEP 5: VISUALIZATION GENERATION")
+    logger.info("=" * 50)
+    logger.info(f"Reading Gold marts from: {gold_dir}")
+    logger.info(f"Writing figures to: {figures_dir}")
     os.makedirs(figures_dir, exist_ok=True)
 
     create_carrier_chart(gold_dir, figures_dir)
@@ -239,8 +266,8 @@ def generate_all_visualizations(gold_dir=None, figures_dir=None):
     create_delay_factors_chart(gold_dir, figures_dir)
     create_airport_bottlenecks_chart(gold_dir, figures_dir)
 
-    print("All visualizations successfully created in SVG format.")
-    print("--------------------------------------------------\n")
+    logger.info("All visualizations successfully created in SVG format.")
+    logger.info("-" * 50 + "\n")
 
 
 if __name__ == "__main__":
@@ -249,4 +276,3 @@ if __name__ == "__main__":
     parser.add_argument("--figures", default=None, help="Directory to save figures")
     args = parser.parse_args()
     generate_all_visualizations(args.gold, args.figures)
-
